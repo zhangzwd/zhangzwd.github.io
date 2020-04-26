@@ -74,7 +74,7 @@ select 元素有很多属性允许你配置，来决定每条语句的作用细�
   timeout="10000"
   fetchSize="256"
   statementType="PREPARED"
-  resultSetType="FORWARD_ONLY" />
+  resultSetType="FORWARD_ONLY" >
 ```
 
 Select Attributes
@@ -99,7 +99,7 @@ Select Attributes
 
 数据变更语句 insert，update 和 delete 的实现非常接近：
 
-```
+```xml
 <insert
   id="insertAuthor"
   parameterType="domain.blog.Author"
@@ -108,21 +108,21 @@ Select Attributes
   keyProperty=""
   keyColumn=""
   useGeneratedKeys=""
-  timeout="20" />
+  timeout="20">
 
 <update
   id="updateAuthor"
   parameterType="domain.blog.Author"
   flushCache="true"
   statementType="PREPARED"
-  timeout="20" />
+  timeout="20">
 
 <delete
   id="deleteAuthor"
   parameterType="domain.blog.Author"
   flushCache="true"
   statementType="PREPARED"
-  timeout="20" />
+  timeout="20">
 ```
 
 Insert, Update 和 Delete 的属性
