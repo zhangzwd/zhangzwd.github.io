@@ -1,5 +1,7 @@
 language: node_js
-node_js: stable
+node_js:
+#  stable
+  12.14.0
 notifications:
   email:
     recipients: 929995143@qq.com
