@@ -44,7 +44,8 @@ code_word_wrap: false
 # copyright 複製的內容後面加上版權信息
 copy:
   enable: true # true 開啟 / false 禁止
-  copyright: false
+  copyright: true
+
 
 # social settings
 # formal:
@@ -565,7 +566,7 @@ translate:
 
 #閲讀模式
 readmode:
-  enable: true
+  enable: false
 
 # dark mode
 darkmode:
