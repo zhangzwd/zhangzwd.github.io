@@ -3,7 +3,7 @@ var minifycss = require('gulp-minify-css');
 var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-htmlmin');
 var htmlclean = require('gulp-htmlclean');
-var imagemin = require('gulp-imagemin');
+// var imagemin = require('gulp-imagemin');
 var babel = require("gulp-babel");
 
 // 压缩html
@@ -36,18 +36,18 @@ gulp.task('minify-js', function() {
         .pipe(gulp.dest('./public/js'));
 });
 // 压缩图片
-gulp.task('minify-images', function() {
-    return gulp.src('./public/images/**/*.*')
-        .pipe(imagemin(
-        [imagemin.gifsicle({'optimizationLevel': 3}),
-        imagemin.jpegtran({'progressive': true}),
-        imagemin.optipng({'optimizationLevel': 7}),
-        imagemin.svgo()],
-        {'verbose': true}))
-        .pipe(gulp.dest('./public/images'));
-});
+// gulp.task('minify-images', function() {
+//     return gulp.src('./public/images/**/*.*')
+//         .pipe(imagemin(
+//         [imagemin.gifsicle({'optimizationLevel': 3}),
+//         imagemin.jpegtran({'progressive': true}),
+//         imagemin.optipng({'optimizationLevel': 7}),
+//         imagemin.svgo()],
+//         {'verbose': true}))
+//         .pipe(gulp.dest('./public/images'));
+// });
 
 // 默认任务
 gulp.task('default', gulp.parallel(
-    'minify-html','minify-css','minify-js','minify-images'
+    'minify-html','minify-css','minify-js'
 ));
