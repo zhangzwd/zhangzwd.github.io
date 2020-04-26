@@ -5,7 +5,6 @@ var htmlmin = require('gulp-htmlmin');
 var htmlclean = require('gulp-htmlclean');
 var imagemin = require('gulp-imagemin');
 var babel = require("gulp-babel");
-var $ = require('gulp-load-plugins')();
 
 // 压缩html
 gulp.task('minify-html', function() {
