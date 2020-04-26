@@ -1,0 +1,276 @@
+#nav
+  position: relative
+  width: 100%
+  background-color: #FFF;
+  background-attachment: local
+  background-position: center center
+  background-size: cover
+  background-repeat: no-repeat
+  transition: all .5s
+  display flex
+  justify-content center
+  box-shadow: 0 0 1px 1px alpha($grey, .2)
+
+  // index
+
+  &.full_page
+    height: $index_top_img_height
+
+    #site-info
+      position: absolute
+      top: $index_site_info_top
+      padding: 0 .5rem
+      width: 100%
+
+  #site_title,
+  #site_subtitle,
+  #scroll_down .scroll-down-effects
+    color: $light-grey
+    text-align: center
+    text-shadow: .1rem .1rem .2rem rgba(0, 0, 0, .15)
+    line-height: 1.5
+
+  #site_title
+    margin: 0
+    font-size: 1.3rem
+
+  #site_subtitle
+    font-size: .8rem
+
+  #site_social_icons
+    display: none
+    margin: 0 auto
+    width: 15rem
+    text-align: center
+
+    .social-icon
+      margin: 0 .5rem
+      color: $light-grey
+      text-shadow: .1rem .1rem .2rem rgba(0, 0, 0, .15)
+      font-size: .9rem
+      cursor: pointer
+
+  #scroll_down
+    position: absolute
+    bottom: 0
+    width: 100%
+    cursor: pointer
+
+    .scroll-down-effects
+      position: relative
+      width: 100%
+      font-size: 30px
+
+  // page
+
+  &.not-index-bg
+    height $index_top_img_height
+
+  #page_site-info
+    position: absolute
+    top: 10rem
+    padding: 0 .5rem
+    width: 100%
+
+  // post
+
+  &.post-bg
+    height: $index_top_img_height
+
+
+#page-header
+  position: absolute
+  top: 0
+  z-index: 99
+  padding: 10px 20px
+  width: 100%
+  height: 58px
+  border: none
+  font-size: 18px
+  opacity: 1
+  transition: all .5s
+  max-width 1400px
+
+  .menu-item-active
+    & > a
+      color $theme-color !important
+
+  &:not(.fixed)
+    .menus
+      padding-right: 0 !important
+
+  .toggle-menu
+    display: none
+    padding: .1rem 0 0 .3rem
+    vertical-align: top
+
+    &:hover
+      color: $white
+
+    &.is-visible-inline
+      .site-page
+        font-size: inherit
+
+  a
+    color: $light-grey
+
+    &:hover
+      color: $theme-color
+
+  &.fixed
+    position: fixed
+    top: -60px
+    z-index: 101
+    background: alpha($white, .8)
+    box-shadow: 0 5px 6px -5px alpha($grey, .6)
+    transition: transform .2s ease-in-out, opacity .2s ease-in-out
+
+    a,
+    #site-name,
+    .toggle-menu
+      color: $font-black
+      text-shadow: none
+
+      &:hover
+        color: $light-blue
+
+  &.visible
+    transition: all .5s
+    transform: translate3d(0, 100%, 0)
+    background-color #FFF
+
+    .menus_item_child
+      background-color: $white !important
+
+  .logo
+    width 40px
+    height 40px
+    display block
+    float left
+    margin-right 15px
+    border-radius 50%
+    background url("/img/avatar.png") no-repeat
+    background-size 100% 100%
+
+  #site-name
+    color: #666
+    font-weight: bold
+    cursor: pointer
+    font-size 20px
+    line-height 40px
+
+  .menus_items
+    display: inline
+
+    .menus_item
+      position: relative
+      display: inline-block
+      padding: 0 0 1.2rem 1.2rem
+
+      &:hover
+        .menus_item_child
+          display: block
+
+        .menus-expand
+          transform: rotate(180deg) !important
+
+      .menus-expand
+        padding: 4px
+        transition: all .3s
+        transform: rotate(0)
+
+      & > a
+        &:after
+          position: absolute
+          bottom: 0
+          left: 0
+          z-index: -1
+          width: 0
+          height: 3px
+          background-color: lighten($theme-color, 30%)
+          content: ''
+          transition: all .3s ease-in-out
+
+        &:hover
+          &:after
+            width: 100%
+
+      .menus_item_child
+        position: absolute
+        right: -0.3rem
+        top 0
+        display: none
+        margin-top: -40px
+        padding: 6px 0
+        width: max-content
+        background-color: alpha($white, 1)
+        box-shadow: 0 5px 20px -4px rgba($dark-black, .5)
+        animation: sub_menus .3s .1s ease both
+
+        &:before
+          content: '';
+          position: absolute;
+          top: -5px;
+          left: 50%;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: 5px solid #aaa;
+
+        &:after
+          content: '';
+          position: absolute;
+          top: -5px;
+          left: 50%;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: 5px solid #fff;
+          margin-top: 1px;
+
+        li
+          padding: 1px 10px
+          list-style: none
+          text-align: center
+
+          &:hover
+            background: #f6f6f6
+
+            a
+              color $theme-color
+
+          a
+            color: $font-black
+            text-shadow: none
+            font-size 16px
+
+
+  #search_button
+    display: inline
+    padding: 0 0 0 .7rem
+
+  .site-page
+    position: relative
+    padding-bottom: .3rem
+    font-size: 18px
+    color #666;
+    cursor: pointer
+
+
+
+@media screen and (min-width: $sm)
+  #nav
+    #site_title
+      font-size: 2rem
+
+    #site_subtitle
+      font-size: 1.2rem
+
+@media screen and (max-width: $sm)
+  #page-header
+    padding: 10px .8rem
+
+  #nav
+    #site_social_icons
+      display: block
+
+    #page_site-info
+      top: 7rem

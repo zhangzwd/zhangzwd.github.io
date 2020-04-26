@@ -1,0 +1,115 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# 站点配置
+title: Java技术天地
+subtitle: ''
+description: Java技术天地,专注于分享Java系列精品文章。内容涵盖Java基础、Java并发、Java集合、源码解析、Spring、SpringBoot等相关研究与知识分享。
+keywords: Java技术天地,Java,Java基础,Java线程,Java并发,Spring,SpringBoot,源码解析,系列文章
+author: Java技术天地
+language: zh-CN
+timezone: Asia/Shanghai
+
+# 网址地址
+url: https://www.zzwzdx.cn
+root: /
+permalink: :show_title/
+permalink_defaults: :show_title/
+
+## 翻译标题
+translate_title:
+  translate_way: baidu_with_appid
+  is_need_proxy: false
+  baidu_appid: '20190910000333269'
+  baidu_appkey: '_29a_qZgdDM27lrfENFp'
+
+## 目录
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true # Open external links in new tab
+  field: site # Apply to the whole site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace: ''
+  wrap: true
+  hljs: false
+
+# 主页显示多少篇文章
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+meta_generator: true
+
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+use_date_for_updated: false
+
+# 分页
+per_page: 10
+pagination_dir: page
+
+special_generator:
+  per_page: 10
+
+# 主题
+theme: Butterfly
+
+# 部署
+deploy:
+  - type: baidu_url_submitter
+
+# 本地搜索
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
+
+# 自动生成sitemap
+sitemap:
+  path: sitemap.xml
+baidusitemap:
+  path: baidusitemap.xml
+
+
+# 百度链接自动提交
+baidu_url_submit:
+  count: 100 # 比如3，代表提交最新的三个链接
+  host: www.zzwzdx.cn # 在百度站长平台中注册的域名
+  token: jRqMwOeXtY8Nmo3F # 请注意这是您的秘钥，请不要发布在公众仓库里!
+  path: baidu_urls.txt # 文本文档的地址，新链接会保存在此文本文档里
+
+
+nofollow:
+  enable: true
+  exclude:
+    - www.zzwzdx.cn
+    - 友链地址

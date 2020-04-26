@@ -1,0 +1,49 @@
+language: node_js
+node_js: stable
+notifications:
+  email:
+    recipients: 929995143@qq.com
+    on_success: never
+    on_failure: always
+cache:
+  apt: true
+  directories:
+  - node_modules
+before_install:
+- openssl aes-256-cbc -K $encrypted_cc212a4de14a_key -iv $encrypted_cc212a4de14a_iv
+  -in id_rsa.enc -out ~/.ssh/id_rsa -d
+-  chmod 600 ~/.ssh/id_rsa
+-  echo -e "Host 188.131.243.253\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- npm install hexo-cli -g
+- export TZ='Asia/Shanghai'
+addons:
+  ssh_known_hosts: 188.131.243.253
+
+install:
+- npm install
+script:
+- hexo clean
+- hexo g && gulp
+- hexo d
+after_script:
+- cd ./public
+- git init
+- git config user.name "zhangzwd"
+- git config user.email "929995143@qq.com"
+- git add .
+- git commit -m "TravicsCI 自动部署"
+# 推送到github
+- git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:master
+# 推送到Coding
+- git push --force --quiet "https://HqcXLZLmsM:${CODING_TRAVIS_CI_TOKEN}@${CODING_REF}" master:master
+# public 后面加上/即可将该目录下的文件都传送到服务器了
+- cd ..
+- rsync -rv --delete -e 'ssh -o stricthostkeychecking=no -p 22' public/  root@188.131.243.253:/var/www/hexo
+- node init_gitalk.js $GITALK_TOKEN
+branches:
+  only:
+  - hexo
+env:
+  global:
+  - GH_REF: github.com/zhangzwd/zhangzwd.github.io.git
+  - CODING_REF: e.coding.net/zhangzwd/zhangzwd.coding.me.git

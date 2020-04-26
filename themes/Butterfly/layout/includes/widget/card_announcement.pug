@@ -1,0 +1,10 @@
+.card-widget.card-announcement
+    .card-content
+        .item-headline
+            i.fa.fa-bullhorn.card-announcement-animation(aria-hidden="true")
+            span= _p('aside.card_announcement')
+        .announcement_content!= theme.announcement.content
+            .card-info-bookmark.is-center
+                a#bookmark-it.bookmark.button--primary.button--animated(href="javascript:;" title= _p('aside.card_bookmark') target="_self")
+                    i.fa.fa-bookmark(aria-hidden="true")
+                    span= _p('aside.card_bookmark') || 'Follow Me'

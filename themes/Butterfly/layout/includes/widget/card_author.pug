@@ -1,0 +1,19 @@
+.card-widget.card-info
+    .card-content
+        .card-info-avatar
+            .left-col
+                img(src=url_for('/img/wechat-qcode.png'))
+            .rght-col
+                h2!= "关注公众号"
+                small
+                    span!="→「技术干货」每日推送"
+                    span!="→「免费资料」随时领取"
+                    span!="→「每月赠书」抽奖活动"
+
+        .wechat-img
+            a(href=url_for("/img/wdewm.jpg") target="_blank")!="点击添加为微信,加入讨论技术群"
+
+        if(theme.social)
+            .social-desc!="除公众号以外，我还会在以下平台发布内容："
+            .card-info-social-icons.is-center
+                include ../header/social.pug

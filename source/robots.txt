@@ -1,0 +1,14 @@
+# robots.txt
+User-agent: *
+Allow: /
+
+Disallow: /js/
+Disallow: /css/
+Disallow: /assets/
+Disallow: /images/
+Disallow: /lib/
+Disallow: /fonts/
+Disallow: /vendors/
+
+Sitemap: https://www.zzwzdx.cn/baidusitemap.xml
+Sitemap: https://www.zzwzdx.cn/sitemap.xml
