@@ -61,8 +61,6 @@ $(function () {
     function menuItemRender() {
         var path = window.location.pathname;
         path = path === '/' ? path : path.substring(0, path.length - 1);
-        console.log($('.main-bg .menus_item a[href^="' + path + '"]:first').parent())
-        console.log($('.main-bg .menus_item a[href^="' + path + '"]:first').parent().parent().parent())
         $('.main-bg .menus_item a[href^="' + path + '"]:first').parent().addClass('menu-item-active');
         $('.main-bg .menus_item a[href^="' + path + '"]:first').parent().parent().parent().addClass('menu-item-active');
     }

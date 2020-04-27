@@ -12,7 +12,7 @@ function debounce (func, wait, immediate) {
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
   }
-};
+}
 
 function throttle (func, wait, options) {
   var timeout, context, args
@@ -59,7 +59,7 @@ function sidebarPaddingR() {
 
 // iPadOS
 function isIpad () {
-  return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 
+  return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
 }
 
 function isTMobile () {
@@ -69,11 +69,11 @@ function isTMobile () {
 }
 
 function isMobile () {
-  return this.isIpad() || this.isTMobile()
+  return isIpad() || isTMobile()
 }
 
 function isDesktop () {
-  return !this.isMobile()
+  return !isMobile()
 }
 
 function scrollTo (name) {
@@ -81,7 +81,7 @@ function scrollTo (name) {
   $('body,html').animate({
     scrollTop: scrollOffset.top
   })
-};
+}
 
 function loadScript (url, callback) {
   var script = document.createElement('script')
@@ -101,7 +101,7 @@ function loadScript (url, callback) {
   }
   script.src = url
   document.body.appendChild(script)
-};
+}
 
 function snackbarShow (text, showAction, duration) {
   var a = (typeof showAction !== 'undefined') ? showAction : false
