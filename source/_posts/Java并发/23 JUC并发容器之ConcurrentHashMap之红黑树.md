@@ -15,7 +15,6 @@ original: true
 show_title: juc-redblacktree
 date: 2019-09-25 13:33:38
 ---
-
 在分析ConcurrentHashMap中有关红黑树的源码之前，我们先要对红黑树进行一定的了解。
 
 ## 红黑树介绍
@@ -94,14 +93,14 @@ RIGHT-ROTATE(T, y)
 
 ## 红黑树插入
 
-在分析红黑树的插入之前，我们先将节点的名称做如下规范：
+在分享红黑树的插入之前，我们先将节点的名称做如下规范：
 
 * I节点：插入节点
 * P节点：插入节点的父节点
 * PP节点：插入节点的祖父节点
 * S节点：插入节点的叔叔节点
 
-红黑树的插入操作可以简单的分为两个步骤，它们分别是一、找到插入的位置，二、插入和自平衡。插入操作的步骤如下：
+红黑树的插入操作可以简单的分为两个步骤，它们分别是一：找到插入的位置，二：插入和自平衡。插入操作的步骤如下：
 
 1. 从根节点开始查找；
 2. 如果根节点为空，则将插入的节点作为根节点，然后结束。
@@ -331,7 +330,7 @@ RIGHT-ROTATE(T, y)
 
 ### concurrentHashMap中红黑树插入
 
-见面介绍完了红黑树的插入和删除操作后，我们来看看ConcurrentHashMap中有关红黑树的操作。首先我们来看ConcurrentHashMap中`put`操作中与红黑树有关的部分，其定义如下：
+前面介绍完了红黑树的插入和删除操作后，我们来看看ConcurrentHashMap中有关红黑树的操作。首先我们来看ConcurrentHashMap中`put`操作中与红黑树有关的部分，其定义如下：
 
 ```java
 else if (f instanceof TreeBin) {
@@ -379,8 +378,8 @@ final TreeNode<K,V> putTreeVal(int h, K k, V v) {
             if (!searched) {
                 TreeNode<K,V> q, ch;
                 searched = true;
-                //先从左边子树查找是否有相同和hash和key,若果存在则返回q节点
-                //若果左边子树查找不到，则从右子树开始查找，查找到返回q节点
+                //先从左边子树查找是否有相同和hash和key,如果存在则返回q节点
+                //如果左边子树查找不到，则从右子树开始查找，查找到返回q节点
                 if (((ch = p.left) != null &&
                      (q = ch.findTreeNode(h, k, kc)) != null) ||
                     ((ch = p.right) != null &&
@@ -429,15 +428,15 @@ final TreeNode<K,V> putTreeVal(int h, K k, V v) {
 
 2. 如果根节点为null,则将当前传入的key和value构建为TreeNode作为新的根节点
 
-3. 若果根节点不为null,则比较当前节点p的hash值和传入的hash值
+3. 如果根节点不为null,则比较当前节点p的hash值和传入的hash值
 
-    1. 若果传入的hash值小于p节点的hash值，则将dir赋值为-1
+    1. 如果传入的hash值小于p节点的hash值，则将dir赋值为-1
 
-    2. 若果传入的hash值大于p节点的hash值，则将dir赋值为1
+    2. 如果传入的hash值大于p节点的hash值，则将dir赋值为1
 
-    3. 若果传入的hash值和key与p节点的hash值和key相同，则返回p节点
+    3. 如果传入的hash值和key与p节点的hash值和key相同，则返回p节点
 
-    4. 如果传入的hash值与p节点的hash值相等，但是key与p节点的key不相等，则表示hash冲突，此时先从根节点的左子树开始查看，如果找到节点的hash和key与传入的hash和key值相等，则返回，否则从根节点的又子树开始查找，找到则返回，如果找不到，则调用`tieBreakOrder`方法比较，`tieBreakOrder`方法的定义如下:
+    4. 如果传入的hash值与p节点的hash值相等，但是key与p节点的key不相等，则表示hash冲突，此时先从根节点的左子树开始查看，如果找到节点的hash和key与传入的hash和key值相等，则返回，否则从根节点的右子树开始查找，找到则返回，如果找不到，则调用`tieBreakOrder`方法比较，`tieBreakOrder`方法的定义如下:
 
         ```java
         static int tieBreakOrder(Object a, Object b) {
@@ -458,10 +457,10 @@ final TreeNode<K,V> putTreeVal(int h, K k, V v) {
     1. 如果dir<=0,则将当前节点p的左子节点作为新的当前节点,即p=p.left
     2. 如果dir>0,则将当前节点p的右子节点作为新的当前节点,即p=p.right
 
-5. 若果当前节p`不为`null，则重复步骤3和步骤4，否则将传入的hash、key 和value构建成新的TreeNode节点x。
+5. 如果当前节p`不为`null，则重复步骤3和步骤4，否则将传入的hash、key 和value构建成新的TreeNode节点x。
 
     1. 将根节点的前驱节点置位x,即f.prev = x;
-    2. 若果dir<=0,则将构建的x节点作为当前节点p的左子节点，即p.left = x;
+    2. 如果dir<=0,则将构建的x节点作为当前节点p的左子节点，即p.left = x;
     3. 否则，将构建的x节点作为当前节点p的右子节点，即p.right = x;
     4. 如果当前节点p不是红色，则将x节点置位红色
     5. 调整红黑树，调用`balanceInsertion`方法。
@@ -498,7 +497,7 @@ static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,TreeNode<K,V> x) 
                 //将祖父节点当做当前节点x，回溯挑战x的父节点的颜色
                 x = xpp;
             }
-            //若果x节点的叔父节点不存在或者为黑色
+            //如果x节点的叔父节点不存在或者为黑色
             else {
                 //如若x为右子节点
                 if (x == xp.right) {
@@ -510,7 +509,7 @@ static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,TreeNode<K,V> x) 
                 if (xp != null) {
                     //将x的父节点xp设置成黑色
                     xp.red = false;
-                    //若果祖父节点不为null,则将祖父节点设置为红色，并且以祖父节点作为支点进行右旋
+                    //如果祖父节点不为null,则将祖父节点设置为红色，并且以祖父节点作为支点进行右旋
                     if (xpp != null) {
                         xpp.red = true;
                         //右旋
@@ -529,9 +528,9 @@ static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,TreeNode<K,V> x) 
                 xpp.red = true;
                 x = xpp;
             }
-            //若果x的叔父节点不存在，或者叔父节点的颜色为黑色
+            //如果x的叔父节点不存在，或者叔父节点的颜色为黑色
             else {
-                //若果x的父节点的左子节点
+                //如果x的父节点的左子节点
                 if (x == xp.left) {
                     //以父节点xp为支点，进行右旋
                     root = rotateRight(root, x = xp);
@@ -551,7 +550,7 @@ static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,TreeNode<K,V> x) 
 }
 ```
 
-`balanceInsertion`方法的逻辑在前面分析红黑树的插入的时候都有分析，若果觉得`balanceInsertion`方法看的有点晕，请结合红黑树的插入部分的分析一起看。下面我们结合实际数据再次详细的分析下`putTreeVal`方法的原理。这里我 们以{5,3,4,9,12,10,11,1}这组数据为例。
+`balanceInsertion`方法的逻辑在前面分析红黑树的插入的时候都有见解，如果觉得`balanceInsertion`方法看的有点晕，请结合红黑树的插入部分的分析一起看。下面我们结合实际数据再次详细的分析下`putTreeVal`方法的原理。这里我 们以{5,3,4,9,12,10,11,1}这组数据为例。
 
 第一步：在插入节点5时，发现根节点为空，因此直接将节点5作为根节点
 

@@ -68,7 +68,7 @@ public void putFirst(E e) throws InterruptedException {
     final ReentrantLock lock = this.lock;
     lock.lock();
     try {
-        // 将节点添加到队列头部，若果失败则等待在notFull条件上
+        // 将节点添加到队列头部，如果失败则等待在notFull条件上
         while (!linkFirst(node))
             notFull.await();
     } finally {
@@ -111,7 +111,7 @@ public E takeFirst() throws InterruptedException {
     lock.lock();
     try {
         E x;
-        // 若果x==null，则将线程等待在notEmpty条件上
+        // 如果x==null，则将线程等待在notEmpty条件上
         while ((x = unlinkFirst()) == null)
             notEmpty.await();
         // 否则返回x
@@ -138,7 +138,7 @@ private E unlinkFirst() {
     f.next = f; 
     // 将first 指向 n
     first = n;
-    // 若果n==null,则表示队列为空，则将last节点也设置为null
+    // 如果n==null,则表示队列为空，则将last节点也设置为null
     if (n == null)
         last = null;
     else

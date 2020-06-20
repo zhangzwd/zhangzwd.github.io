@@ -13,7 +13,6 @@ original: true
 show_title: juc-countdownlatch
 date: 2019-09-16 12:57:32
 ---
-
 CountDownLatch是一个同步辅助类，在完成一组正在其他线程中执行的操作之前，它允许一个或多个线程一直等待。它是通过一个计数器来实现的，当我们在new 一个CountDownLatch对象的时候需要带入该计数器值，该值就表示了线程的数量。每当一个线程完成自己的任务后，计数器的值就会减1。当计数器的值变为0时，就表示所有的线程均已经完成了任务，然后就可以恢复等待的线程继续执行了。
 
 我们先用一个简单的实例来了解下CountDownLatch的使用，实例如下：
@@ -53,7 +52,7 @@ public class CountDownLatchDemo {
 }
 ```
 说明：创建等待线程数为5，当主线程Main运行到doneSignal.wait()时会阻塞当前线程，直到另外5个线程执行完成之后主线程才会继续执行。
-#### 构造函数
+### 构造函数
 
 构造函数设置锁标识state的值，CountDownLatch countDownLatch = new  CountDownLatch(5) 实现的操作是设置锁标识state的值为5,其构建函数的源码如下：
 
@@ -221,6 +220,6 @@ private void doReleaseShared() {
 ```
 
 
-#### 总结
+### 总结
 
 CountDownLatch内部通过共享锁实现。在创建CountDownLatch实例时，需要传递一个int型的参数：count，该参数为计数器的初始值，也可以理解为该共享锁可以获取的总次数。当某个线程调用await()方法，程序首先判断count的值是否为0，如果不会0的话则会一直等待直到为0为止。当其他线程调用countDown()方法时，则执行释放共享锁状态，使count值 – 1。当在创建CountDownLatch时初始化的count参数，必须要有count线程调用countDown方法才会使计数器count等于0，锁才会释放，前面等待的线程才会继续运行。注意CountDownLatch不能回滚重置。

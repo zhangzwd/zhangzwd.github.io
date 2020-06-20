@@ -13,7 +13,7 @@ original: true
 date: 2019-05-11 18:25:22
 ---
 
-在Java中我们启动线程都是调用Thread类中的start()方法来启动，当线程处理完run()方法里面的逻辑后自动终止。但是在调用start()方法之前，我们需要先构建一个Thread对象，一般我们都是直接使用Thread类的构造函数来创建一个线程对象，Thread构造函数定义如下：
+在Java中我们启动线程都是调用Thread类中的start()方法来启动，当线程处理完`run()`方法里面的逻辑后自动终止。但是在调用`start()`方法之前，我们需要先构建一个Thread对象，一般我们都是直接使用Thread类的构造函数来创建一个线程对象，Thread构造函数定义如下：
 
 ```java
 public Thread() {
@@ -54,9 +54,7 @@ public Thread(ThreadGroup group, Runnable target, String name,
 }
 ```
 
-
-我们可以看到在Thread类中定义了这么多的构造函数，但是这些构造函数都是调用init()方法来完成Thread对象的构建，init方法定义如下：
-
+我们可以看到在Thread类中定义了这么多的构造函数，但是这些构造函数都是调用`init()`方法来完成Thread对象的构建，`init()`方法定义如下：
 
 ```java
 private void init(ThreadGroup g, Runnable target, String name,
@@ -128,7 +126,9 @@ private void init(ThreadGroup g, Runnable target, String name,long stackSize, Ac
     tid = nextThreadID();
 }
 ```
+
 从init方法中我们看到，线程daemon属性、线程的优先级、资源加载的contextClassLoader以及可继承的ThreadLocal都是继承自父线程。从这里也也验证了前面文章中提到的线程优先级的继承性。在init()方法执行完毕后，一个线程对象就被构建出来了，它存放在堆内存中等待调用start()方法启动。start()方法在Thread类中的定义如下：
+
 ```java
 public synchronized void start() {
    // 构建线程threadStatus默认值为0
@@ -203,13 +203,15 @@ private void remove(Thread t) {
     }
 }
 ```
-从上面源码中，我们可以看出start()方法最终是调用本地方法start0()方法启动线程的。那么start0()这个本地方法具体做了那些事情呢，它主要完成了将Thread在虚拟机中启动，执行构建Thread对象时重写的run()方法，修改threadStatus的值。
-从上面start()方法的源码中，start()方法时不能被重复调用的，当重复调用start()方法时，会抛出IllegalThreadStateException异常。说完了线程的启动，我们在来说说线程的终止。
 
-##### 线程终止
----
-我们在看Thread类的源码的时候，发现Thread类提供了stop()、suspend()和resume()方法来讲线程终止，暂停和恢复。但是这些方法在Thread类中被标记为废弃的方法，不推荐开发者使用这些方法。至于原因，小伙伴自己去查阅资料，这里LZ就不在赘述了。既然官方不推荐是用这么方法来终止线程，那我们应该应该用什么来代替呢？
+从上面源码中，我们可以看出start()方法最终是调用本地方法start0()方法启动线程的。那么start0()这个本地方法具体做了那些事情呢，它主要完成了将Thread在虚拟机中启动，执行构建Thread对象时重写的run()方法，修改threadStatus的值。
+从上面start()方法的源码中可以看到，start()方法是不能被重复调用的，当重复调用start()方法时，会抛出IllegalThreadStateException异常。说完了线程的启动，我们再来说说线程的终止。
+
+### 线程终止
+
+我们在看Thread类的源码的时候，发现Thread类提供了stop()、suspend()和resume()方法来管理线程终止，暂停和恢复。但是这些方法在Thread类中被标记为废弃的方法，不推荐开发者使用这些方法。至于原因，小伙伴自己去查阅资料，这里LZ就不在赘述了。既然官方不推荐是用这么方法来终止线程，那我们应该应该用什么来代替呢？
 stop()方法的替代方案是在线程对象的run方法中循环监视一个变量，这样我们就可以很优雅的终止线程。
+
 ```java
 public class ThreadOne extends Thread {
 
@@ -246,9 +248,11 @@ output:
 1554371309 线程正在运行
 1554371310 线程正在运行
 ```
+
 从上面的示例中，我们可以看到线程在运行了5秒中后，自动关闭了。这是因为主线程在睡眠了5秒后，给ThreadOne类中的flag值赋予了false值。
 
 suspend()和resume()方法的替代方案是使用等待/通知机制。等待/通知的方法是定义在Object类上面的，因此任何类都能实现等待/通知。等待/通知方法定义如下：
+
 ```java
 // 通知一个在对象上等待的线程，使其从wait()方法返回，而从wait()方法返回的前提是需要获取锁
 public final native void notify();
@@ -263,7 +267,9 @@ public final void wait() throws InterruptedException {
     wait(0);
 }
 ```
+
 等待/通知示例如下：
+
 ```java
 public class NotifyAndWait {
 
@@ -320,10 +326,11 @@ NotifyThread开始运行...
 NotifyThread执行完成...
 WaitThread执行完成...
 ```
-从上面的示例代码中我们看到，当WaitThread线程调用start()方法后,当指定了wait()方法将释放做进入到等待队列，然后NotifyThread获取到了锁，当通知线程执行了notify()方法后，将会通知等待在该锁上面的线程，当NotifyThread线程运行完成后，WaitThread线程将会重新回复执行。
+
+从上面的示例代码中我们看到，当WaitThread线程调用start()方法并执行完了wait()方法后，将释放锁，然后NotifyThread获取到了锁，当通知线程执行了notify()方法后，将会通知等待在该锁上面的线程，当NotifyThread线程运行完成后，WaitThread线程将会重新恢复执行。
 调用wait()方法和notify()方法需要注意一下几点：
 
-* 调用wait()或notify()方法之前需要获取到锁。
-* 当调用wait()方法后，线程会已经释放锁。
-* 当调用wait()方法后，线程将从运行状态转变为WAITING状态，并将线程方法到等待队列中。
-* 当调用notify()/notifyAll()方法后，线程不会立即释放锁，它必须在线程执行完后释放锁，wait线程才能获取到锁再次执行。
+- 调用wait()或notify()方法之前需要获取到锁。
+- 当调用wait()方法后，线程会立即释放锁。
+- 当调用wait()方法后，线程将从运行状态转变为WAITING状态，线程进入等待队列中。
+- 当调用notify()/notifyAll()方法后，线程不会立即释放锁，它必须在线程执行完后释放锁，wait线程才能获取到锁再次执行。

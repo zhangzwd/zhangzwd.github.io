@@ -23,9 +23,9 @@ date: 2019-06-06 10:02:45
 happens-before规则如下：
 
 1. 程序顺序规则：一个线程中的每一个操作，happens-before于该线程中的任意后续操作。
-2. 监视器规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。
+2. 监视器规则：对一个锁的解锁，happens-before与随后对这个锁的加锁。
 3. volatile规则：对一个volatile变量的写，happens-before于任意后续对一个volatile变量的读。
-4. 传递性：若果A happens-before B，B happens-before C，那么A happens-before C。
+4. 传递性：如果A happens-before B，B happens-before C，那么A happens-before C。
 5. 线程启动规则：Thread对象的start()方法，happens-before于这个线程的任意后续操作。
 6. 线程终止规则：线程中的任意操作，happens-before于该线程的终止监测。我们可以通过Thread.join()方法结束、Thread.isAlive()的返回值等手段检测到线程已经终止执行。
 7. 线程中断操作：对线程interrupt()方法的调用，happens-before于被中断线程的代码检测到中断事件的发生，可以通过Thread.interrupted()方法检测到线程是否有中断发生。
@@ -33,7 +33,7 @@ happens-before规则如下：
 
 以上8条happens-before规则都比较简单，这里LZ只分析第3条volatile变量规则，分析如下：
 
-![image](https://s2.ax1x.com/2019/05/07/Eyeg81.png)
+![happens-before之volatile规则](http://cdn.zzwzdx.cn/blog/happens-before之volatile规则.png&blog)
 
 从上图中，我们看到存在4条happens-before关系，它们分别如下：
 
@@ -41,7 +41,7 @@ happens-before规则如下：
 * 2 happens-before 3 是由volatile规则产生的。上面提到过，一个volatile变量的读，总能看到之前对这个volatile变量的写入。
 * 1 happens-before 4 是由传递性规则产生的。
 
-读到这里，可能很多童鞋会把happens-before理解为“时间上的先后顺序”，在这里LZ特别强调**happens-hefore不能理解为“时间上的先后顺序”**，下面LZ用一段代码解释写happens-before和“时间上的先后顺序”的不同，代码如下：
+读到这里，可能很多同学会把happens-before理解为“时间上的先后顺序”，在这里LZ特别强调**happens-hefore不能理解为“时间上的先后顺序”**，下面LZ用一段代码解释写happens-before和“时间上的先后顺序”的不同，代码如下：
 
 ```java
 public class VolatileTest4 {
@@ -55,19 +55,19 @@ public class VolatileTest4 {
 }
 ```
 
-上面代码就是一组简单的setter/getter方法，现在假设现在有两个线程A和B，线程A先(这里指时间上的先执行)执行setA(10)，然后线程B访问同一个对象的getA()方法，那么此时线程B收到的返回值是对少呢？
+上面代码就是一组简单的setter/getter方法，现在假设现在有两个线程A和B，线程A先(这里指时间上的先执行)执行setA(10)，然后线程B访问同一个对象的getA()方法，那么此时线程B收到的返回值是多少呢？
 
 答案是：**不确定**
 
 我们来一次分析下happens-before的各项原则：
 
 1. 这里两个方法分别是在两个线程中被调用，不在一个线程中，这里程序顺序性就不适用了
-2. 代码中没有同步快，所有监视器规则也不适用
+2. 代码中没有同步块，所有监视器规则也不适用
 3. 代码中变量a是一个普通变量，所以volatile规则也不适用
 4. 后面的线程启动、中断、终止和对象的终结和这里完全没有关系，因此这些规则也是不适用的
 5. 没有一条happens-before适用，因此传递性规则也不适用
 
-在这里，虽然线程A在时间上先于线程B执行，但是由于代码完全不适用happens-before规则，因此我们无法确定先B收到的值时多少。也就是说上面代码是线程不安全的。
+在这里，虽然线程A在时间上先于线程B执行，但是由于代码完全不适用happens-before规则，因此我们无法确定先B收到的值是多少。也就是说上面代码是线程不安全的。
 
 对于上面代码，那我们如何修复线程不安全这个问题呢？这里，我们只要满足happens-before规则中2、3的任意一种规则就可以了。即要么把setter/getter方法定义为synchronized方法，要么在变量a上加volatile修饰符。
 

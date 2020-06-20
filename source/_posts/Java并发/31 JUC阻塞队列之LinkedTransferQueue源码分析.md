@@ -301,7 +301,7 @@ private E xfer(E e, boolean haveData, int how, long nanos) {
                 // item != p 表示节点未被删除
                 // (item != null) == isData 表示节点未被匹配
                 if (item != p && (item != null) == isData) { 
-                    //若果头结点和代匹配的节点类型一致，则直接返回不进行匹配操作
+                    //如果头结点和代匹配的节点类型一致，则直接返回不进行匹配操作
                     if (isData == haveData) 
                         break;
                      // 开始匹配操作
@@ -376,7 +376,7 @@ private Node tryAppend(Node s, boolean haveData) {
         //如果队尾节点的模式和s节点的模式不一致，则返回true    
         } else if (p.cannotPrecede(haveData))
             return null;
-        //若果p节点不是队尾节点，则重新定位队尾节点    
+        //如果p节点不是队尾节点，则重新定位队尾节点    
         else if ((n = p.next) != null) 
             p = p != t && t != (u = tail) ? (t = u) :
             (p != n) ? n : null; // restart if off list
@@ -397,7 +397,7 @@ private Node tryAppend(Node s, boolean haveData) {
 }
 ```
 
-tryAppend方法的目的就是将s节点添加到队列的尾部，若果成功则返回其前驱节点(没有前驱节点则返回自身)。如果失败则返回null。 在方法返回成功后，如果how还不是ASYNC则调用awaitMatch()方法阻塞等待： 
+tryAppend方法的目的就是将s节点添加到队列的尾部，如果成功则返回其前驱节点(没有前驱节点则返回自身)。如果失败则返回null。 在方法返回成功后，如果how还不是ASYNC则调用awaitMatch()方法阻塞等待： 
 
 ```java
 private E awaitMatch(Node s, Node pred, E e, boolean timed, long nanos) {
@@ -495,9 +495,9 @@ final void unsplice(Node pred, Node s) {
 到这里主体流程已经结束。最后总结如下：
 
 * LinkedTransferQueue的put操作和take操作都是通过调用`E xfer(E e, boolean haveData, int how, long nanos)`方法来完成的，只是操作中每个方法传入的how不同。
-* 若果新节点的模式和队列中头结点的模式不一样，则直接进行匹配操作，新节点不加入到队列中。
+* 如果新节点的模式和队列中头结点的模式不一样，则直接进行匹配操作，新节点不加入到队列中。
 * 如果新节点的模式和队列中头结点的模式一致，则将新节点添加到队列尾部。
-* 若节点添加成功，且how != ASYNC， 则调用awaitMatch()方法阻塞等待， 在阻塞等待的过程中，若果线程超时或者被中断，则将节点从队列中移除。
+* 若节点添加成功，且how != ASYNC， 则调用awaitMatch()方法阻塞等待， 在阻塞等待的过程中，如果线程超时或者被中断，则将节点从队列中移除。
 
 
 

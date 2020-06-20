@@ -15,9 +15,9 @@ date: 2019-09-30 20:00:28
 ---
 ArrayBlockingQueue是一个由数组实现的有界阻塞队列。这个队列会按照先进先出（FIFO）的原则对元素进行排序。
 
-ArrayBlockingQueue提供了公平性和非公平性的选择，默认情况下ArrayBlockingQueue不保证先出公平的访问队列，这里公平性的访问队列是指阻塞的线程可以按照阻塞的先后顺序访问队列，即先阻塞的线程先访问队列。反之先阻塞的线程不一定能够先访问队列即为非公平性。为了保证公平性，通常会降低吞吐量。
+ArrayBlockingQueue提供了公平性和非公平性的选择，默认情况下ArrayBlockingQueue不保证先出先出公平的访问队列，这里公平性的访问队列是指阻塞的线程可以按照阻塞的先后顺序访问队列，即先阻塞的线程先访问队列。反之先阻塞的线程不一定能够先访问队列即为非公平性。为了保证公平性，通常会降低吞吐量。
 
-#### ArrayBlockingQueue构造函数
+### ArrayBlockingQueue构造函数
 
 ArrayBlockingQueue提供了3种构建队列的方式，他们分别如下：
 
@@ -87,16 +87,16 @@ public ArrayBlockingQueue(int capacity, boolean fair, Collection<? extends E> c)
 
 构造函数主要的逻辑就是初始化数组大小，并初始化公平/非公平的重入锁，并初始化队列满和空的条件。看完了构造函数，下面我们来看看ArrayBlokcingQueue的入列和出列操作。
 
-#### 入列
+### 入列
 
-ArrayBlockingQueue提供了4中入列操作，分别如下：
+ArrayBlockingQueue提供了4种入列操作，分别如下：
 
-* `add(E e):`当队列满时，调用次方法向队列中插入元素为抛出*IllegalStateException("Queue full")*异常，添加元素成功返回true。
-* `offer(E e):`当队列满时，调用次方法向队列中添加元素会返回false，添加元素成功则返回true。
-* `put(E e) throws InterruptedException:`当队列满时，调用次方法向队列中添加元素，线程会被阻塞。直到队列不满或者线程被打断则从方法退出。
-* `offer(E e, long timeout, TimeUnit unit) throws InterruptedException:` 当队列满时，调用次方法向队列中添加元素，会等待timout时间，当时间超过timeout时返回false。
+* `add(E e):`当队列满时，调用此方法向队列中插入元素会抛出*IllegalStateException("Queue full")*异常，添加元素成功返回true。
+* `offer(E e):`当队列满时，调用此方法向队列中添加元素会返回false，添加元素成功则返回true。
+* `put(E e) throws InterruptedException:`当队列满时，调用此方法向队列中添加元素，线程会被阻塞。直到队列不满或者线程被打断则从方法退出。
+* `offer(E e, long timeout, TimeUnit unit) throws InterruptedException:` 当队列满时，调用此方法向队列中添加元素，会等待timout时间，当时间超过timeout时返回false。
 
-分析了这4中入列操作的不同，我们接下来看看在ArrayBlockingQueue中它们是如何实现的。
+分析了这4种入列操作的不同，我们接下来看看在ArrayBlockingQueue中它们是如何实现的。
 
 **add(E e)方法：**
 
@@ -107,7 +107,7 @@ public boolean add(E e) {
 }
 ```
 
-我们继续看父类的`add`方法做了什么操作，ArrayBlockingQueue基础了`AbstractQueue`这个了抽象类，那么调用父类的add方法就是调用`AbstractQueue`抽象类中的add方法，其方法定义如下：
+我们继续看父类的`add`方法做了什么操作，ArrayBlockingQueue继承了`AbstractQueue`这个了抽象类，那么调用父类的add方法就是调用`AbstractQueue`抽象类中的add方法，其方法定义如下：
 
 ```java
 public boolean add(E e) {
@@ -134,7 +134,7 @@ public boolean offer(E e) {
     //加锁
     lock.lock();
     try {
-        //判断对了中的元素个数和队列的长度是否相等，相等标识队列已经满了，返回false
+        //判断队列中的元素个数和队列的长度是否相等，相等标识队列已经满了，返回false
         if (count == items.length)
             return false;
         else {
@@ -192,11 +192,11 @@ public void put(E e) throws InterruptedException {
 }
 ```
 
-`put`方法的逻辑也比较简单，这里若果看了LZ前面关于[AQS之独占式同步状态的获取和释放]()的这篇文章，则很好理解`lock.lockInterruptibly();`的作用，它的目的就是响应中断的获取锁，若果获取锁成功，则执行下面的代码，如果获取锁失败，则获取进入的同步队列中以自旋式的获取锁，直到线程被中断或者获取锁成功才会退出同步队列。
+`put`方法的逻辑也比较简单，这里如果看了LZ前面关于[AQS之独占式同步状态的获取和释放]()的这篇文章，则很好理解`lock.lockInterruptibly();`的作用，它的目的就是响应中断的获取锁，如果获取锁成功，则执行下面的代码，如果获取锁失败，则进入到同步队列中以自旋式的获取锁，直到线程被中断或者获取锁成功才会退出同步队列。
 
 **offer(E e, long timeout, TimeUnit unit)方法：**
 
-超时等待的向队列中添加元素，如果队列满时，调用该方法则会阻塞timeout时间，如果在此期间有线程取走了元素并且当前线程被唤醒则会将元素添加到队列中去，若果timeout时间后队列任然是满的，则返回false，其源码如下：
+超时等待的向队列中添加元素，如果队列满时，调用该方法则会阻塞timeout时间，如果在此期间有线程取走了元素并且当前线程被唤醒则会将元素添加到队列中去，如果timeout时间后队列仍然是满的，则返回false，其源码如下：
 
 ```java
 public boolean offer(E e, long timeout, TimeUnit unit) throws InterruptedException {
@@ -224,11 +224,11 @@ public boolean offer(E e, long timeout, TimeUnit unit) throws InterruptedExcepti
 }
 ```
 
-#### 出列
+### 出列
 
-上面分析了ArrayBlockingQueue入列的情况，下面我们来分析ArrayBlockingQueue出列的情况。ArrayBlockingQueue同样提供了4中出列操作，它们分别是：
+上面分析了ArrayBlockingQueue入列的情况，下面我们来分析ArrayBlockingQueue出列的情况。ArrayBlockingQueue同样提供了4种出列操作，它们分别是：
 
-* `E poll():`从队列的头部取出一个元素，若果队列为空，则返回null。
+* `E poll():`从队列的头部取出一个元素，如果队列为空，则返回null。
 * `E take():`从队列的头部取出一个元素，如果队列为空，则阻塞。
 * `E poll(long timeout, TimeUnit unit):`从队列头部取出一个元素，如果队列为空，则等待timeou时间。
 * `E peek():`查看队列第一个非空的元素，并不会将次元素从队列中移除。
@@ -246,7 +246,7 @@ public E poll() {
     // 加锁
     lock.lock();
     try {
-        // 若果队列为空，则返回null,否则调用dequeue()方法
+        // 如果队列为空，则返回null,否则调用dequeue()方法
         return (count == 0) ? null : dequeue();
     } finally {
         // 解锁
@@ -280,7 +280,7 @@ public E take() throws InterruptedException {
 }
 ```
 
-`take`方法与前面介绍的`put`方法逻辑非常相似，只不过一个是添加元素一个是获取元素而已。这里我们看到`take`方法的核心任然是`dequeue`方法。
+`take`方法与前面介绍的`put`方法逻辑非常相似，只不过一个是添加元素一个是获取元素而已。这里我们看到`take`方法的核心仍然是`dequeue`方法。
 
 **poll(long timeout, TimeUnit unit)方法：**
 
@@ -308,7 +308,7 @@ public E poll(long timeout, TimeUnit unit) throws InterruptedException {
 }
 ```
 
-我们发现`poll()`、`take()`和`poll（long timeout，TimeUnit unit）`方法和核心都是`dequeue()`方法，那么接下来我们就看看`dequeue()`方法到底做了写什么。
+我们发现`poll()`、`take()`和`poll（long timeout，TimeUnit unit）`方法和核心都是`dequeue()`方法，那么接下来我们就看看`dequeue()`方法到底做了些什么。
 
 ```java
 private E dequeue() {
@@ -332,7 +332,7 @@ private E dequeue() {
 }
 ```
 
-该方法逻辑很清晰，即从队列头takeIndex位置处获取元素，并将该位置置位null。如果取得的最后一个元素，则将takeIndex置为0。然后唤醒在入列过程中阻塞的线程。
+该方法逻辑很清晰，即从队列头takeIndex位置处获取元素，并将该位置置为null。如果取得的最后一个元素，则将takeIndex置为0。然后唤醒在入列过程中阻塞的线程。
 
 **peek()方法：**
 
@@ -354,6 +354,3 @@ final E itemAt(int i) {
 ```
 
 到此我们分析完了ArrayBlcokingQueue中入列和出列的全部方法。可以看出ArrayBlockingQueue入列和出列的逻辑还是比较简单的。下一篇LZ将分析右链表结果组成的有界队列LinkedBlockingQueue。
-
-
-

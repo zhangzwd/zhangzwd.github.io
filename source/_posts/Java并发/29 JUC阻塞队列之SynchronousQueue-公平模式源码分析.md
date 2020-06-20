@@ -13,12 +13,11 @@ show_title: juc-synchronousQueue-fair
 translate_title: source-code-analysis-of-synchronousqueue-fair-mode-of-juc-blocking-queue
 date: 2019-10-29 09:18:18
 ---
-
 synchronousQueue是一个不存储元素的阻塞队列。每个put操作必须等待一个take操作，否则不能继续向队列中添加元素。synchronousQueue同样支持公平和非公平性，在默认情况下线程采用非公平性策略进行访问。
 
 ### 构造函数
 
-SynchronousQueue提供了2中构造方式，一种是默认的非公平性，一种中可选择公平和非公平性的构造方式，构造函数源码如下：
+SynchronousQueue提供了2种构造方式，一种是默认的非公平性，一种是可选择公平和非公平性的构造方式，构造函数源码如下：
 
 ```java
 public SynchronousQueue() {
@@ -30,7 +29,7 @@ public SynchronousQueue(boolean fair) {
 }
 ```
 
-从上面源码中，我们可以看到，当SynchronousQueue非公平时，使用的是TransferStack这个类来构造的，否则使用的是TransferQueue这个类进行构造，下面我们看看这2各类的实现。
+从上面源码中，我们可以看到，当SynchronousQueue非公平时，使用的是TransferStack这个类来构造的，否则使用的是TransferQueue这个类进行构造，下面我们看看这2个类的实现。
 
 #### TransferQueue
 
@@ -358,7 +357,7 @@ Object awaitFulfill(QNode s, E e, boolean timed, long nanos) {
             s.tryCancel(e);
          //获取当前节点的内容   
         Object x = s.item;
-        //若果当前节点的值和当前值是否相等，不相等表示节点已经被取出(交易)
+        //如果当前节点的值和当前值是否相等，不相等表示节点已经被取出(交易)
         if (x != e)
             return x;
         //计算截止时间   
@@ -599,7 +598,7 @@ void clean(QNode pred, QNode s) {
         }
         //获取对了的尾节点
         QNode t = tail; 
-        //若果队列为空，则退出
+        //如果队列为空，则退出
         if (t == h)
             return;
         //获取尾节点的下一个节点
@@ -902,3 +901,4 @@ if (dp != null) { // Try unlinking previous cancelled node
 
 ![](http://cdn.zzwzdx.cn/blog/clean_3_4.png&blog)
 
+就此SynchronousQueue的公平模式的数据交换分析完毕，如果有不正确的地方请指正。下一篇将分析SynchronousQueue的非公平模式。

@@ -82,7 +82,7 @@ E transfer(E e, boolean timed, long nanos) {
             }
         // 判断栈顶节点mode不是FULFILLING
         } else if (!isFulfilling(h.mode)) { 
-            //若果栈顶指针的删除标识为true，则删除栈顶指针并重定义head节点
+            //如果栈顶指针的删除标识为true，则删除栈顶指针并重定义head节点
             if (h.isCancelled()) 
                 casHead(h, h.next); 
             //新建一个Full节点压入栈顶
@@ -104,7 +104,7 @@ E transfer(E e, boolean timed, long nanos) {
                         s.casNext(m, mn); 
                 }
             }
-        //若果栈顶节点的mode是FULFILLING，则表示有线程正在匹配，则先帮助匹配在循环    
+        //如果栈顶节点的mode是FULFILLING，则表示有线程正在匹配，则先帮助匹配在循环    
         } else {
             SNode m = h.next; 
             if (m == null) 
@@ -233,13 +233,13 @@ SNode awaitFulfill(SNode s, boolean timed, long nanos) {
 }
 ```
 
-上面`awaitFulfill`方法的逻辑比较清晰，首先判断线程是否中断，若果中断则将节点清除。然后判断节点是否已经匹配，如果已经匹配，则返回匹配的节点，否则判断节点是否需要自旋，判断的方法为`shouldSpin(s)`,如果需要自旋，则先自旋，若果不需要自旋或者在自旋次数完毕后，节点还没有被匹配或者中断，则阻塞当前线程。判断是否需要自旋源码如下：
+上面`awaitFulfill`方法的逻辑比较清晰，首先判断线程是否中断，如果中断则将节点清除。然后判断节点是否已经匹配，如果已经匹配，则返回匹配的节点，否则判断节点是否需要自旋，判断的方法为`shouldSpin(s)`,如果需要自旋，则先自旋，如果不需要自旋或者在自旋次数完毕后，节点还没有被匹配或者中断，则阻塞当前线程。判断是否需要自旋源码如下：
 
 ```java
 boolean shouldSpin(SNode s) {
     //栈顶指针
     SNode h = head;
-    //若果带匹配的节点就是栈顶节点 或者 栈顶节点为null  或者站点节点的mode是FULFILLING，则需要自旋
+    //如果带匹配的节点就是栈顶节点 或者 栈顶节点为null  或者站点节点的mode是FULFILLING，则需要自旋
     return (h == s || h == null || isFulfilling(h.mode));
 }
 ```
@@ -300,7 +300,7 @@ boolean tryMatch(SNode s) {
 }
 ```
 
-tryMatch方法逻辑比较简单，利用CAS更新m节点的match字段为s节点，若果更新成功，则唤醒m节点中的额waiter线程。到此SynchronousQueue的给公平模式就分析完成了，但是细心的朋友会发现，最后面还有一个帮助fulfill的操作，（transfer中）代码如下所示： 
+tryMatch方法逻辑比较简单，利用CAS更新m节点的match字段为s节点，如果更新成功，则唤醒m节点中的额waiter线程。到此SynchronousQueue的给公平模式就分析完成了，但是细心的朋友会发现，最后面还有一个帮助fulfill的操作，（transfer中）代码如下所示： 
 
 ```java
 SNode m = h.next;               // m is h's match

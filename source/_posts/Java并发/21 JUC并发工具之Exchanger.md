@@ -13,8 +13,7 @@ original: true
 show_title: juc-exchanger
 date: 2019-09-21 09:11:17
 ---
-
-#### 实现原理
+### 实现原理
 
 Exchanger(交换者)是用于线程协作的工具类。Exchanger用于进行两个线程之间的数据交换。它提供一个同步点，在这个同步点，两个线程可以交换彼此的数据。这两个线程通过exchange()方法交换数据，当一个线程先执行exchange()方法后，它会一直等待第二个线程也执行exchange()方法，当这两个线程到达同步点时，这两个线程就可以交换数据了。
 
@@ -53,7 +52,7 @@ private volatile Node[] arena;
 private volatile Node slot;
 ```
 
-participant的作用是为每个线程保留唯一的一个Node节点。slot为单个槽，arena为数组槽。他们都是Node类型。这里arena存在的意义是当有多个参与者使用同一个交换场所时，会存在严重伸缩性问题。既然单个交换场所存在问题，那么我们就安排多个，也就是数组arena。通过数组arena来安排不同的线程使用不同的slot来降低竞争问题，并且可以保证最终一定会成对交换数据。但是Exchanger不是一来就会生成arena数组来降低竞争，只有当产生竞争时才会生成arena数组。那么怎么将Node与当前线程绑定呢？Participant ，Participant 的作用就是为每个线程保留唯一的一个Node节点，它继承ThreadLocal，同时在Node节点中记录在arena中的下标index
+participant的作用是为每个线程保留唯一的一个Node节点。slot为单个槽，arena为数组槽。他们都是Node类型。这里arena存在的意义是当有多个参与者使用同一个交换场所时，会存在严重伸缩性问题。既然单个交换场所存在问题，那么我们就安排多个，也就是数组arena。通过数组arena来安排不同的线程使用不同的slot来降低竞争问题，并且可以保证最终一定会成对交换数据。但是Exchanger不是一来就会生成arena数组来降低竞争，只有当产生竞争时才会生成arena数组。那么怎么将Node与当前线程绑定呢？这里就要用到Participant ，Participant 的作用就是为每个线程保留唯一的一个Node节点，它继承ThreadLocal，同时在Node节点中还记录了其在arena中的下标index的值。
 
 Node的数据结构如下：
 
@@ -78,14 +77,14 @@ Node的数据结构如下：
 
 Exchanger的核心方法为`exchange(V x)`，下面我们就来分析下`exchange(V x)`方法。
 
-#### exchange(V x)方法
+### exchange(V x)方法
 
 **exchange(V x)**：等待另一个线程到达此交换点（除非当前线程被中断），然后将给定的对象传送给该线程，并接收该线程的对象。方法定义如下：
 
 ```java
 public V exchange(V x) throws InterruptedException {
     Object v;
-    // 当参数为null时需要将item设置为空的对象
+    // 当参数为null时需要将item设置为空
     Object item = (x == null) ? NULL_ITEM : x; // translate null args
     // 注意到这里的这个表达式是整个方法的核心
     if ((arena != null ||
@@ -111,7 +110,7 @@ private final Object slotExchange(Object item, boolean timed, long ns) {
     Node p = participant.get();
     // 当前线程
     Thread t = Thread.currentThread();
-    // 若果线程被中断，就直接返回null
+    // 如果线程被中断，就直接返回null
     if (t.isInterrupted()) // preserve interrupt status so caller can recheck
         return null;
 	// 自旋
@@ -143,7 +142,7 @@ private final Object slotExchange(Object item, boolean timed, long ns) {
                 // 初始化arena数组
                 arena = new Node[(FULL + 2) << ASHIFT];
         }
-        // 上面分析过，只有当arena不为空才会执行slotExchange方法的
+        // 上面分析过，只有当arena不为空才会执行slotExchange方法
 		// 所以表示刚好已有其它线程加入进来将arena初始化
         else if (arena != null)
             // 这里就需要去执行arenaExchange

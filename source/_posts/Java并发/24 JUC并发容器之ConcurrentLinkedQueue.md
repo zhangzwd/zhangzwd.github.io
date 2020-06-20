@@ -13,25 +13,24 @@ original: true
 show_title: juc-concurrent-linkedqueue
 date: 2019-09-27 13:54:40
 ---
+在并发编程中，我们有时需要使用到线程安全的队列，而线程安全队列的实现一般有两种方式：一种是使用阻塞算法，一种是使用非阻塞算法。使用阻塞算法的队列可以使用一把锁(入列和出列使用同一把锁)或两把锁(入列和出列使用不同的锁)来实现的。非阻塞算法方式则是利用循环CAS来实现的。这一章我们就来探索一下非阻塞算法实现的线程安全队列ConcurrentLinkedQueue。
 
-在编发编程中，我们有时需要使用到线程安全的队列，而线程安全队列的实现一般有两种方式：一种是使用阻塞算法，一种是使用非阻塞算法。使用阻塞算法的队列可以使用一把锁(入列和出列使用同一把锁)或两把锁(入列和出列使用不同的锁)来实现的。非阻塞算法方式则是利用循环CAS来实现的。这一章我们就来探索一下非阻塞算法实现的线程安全多了ConcurrentLinkenQueue。
+ConcurrentLinkedQueue规定了如下几个不变性：
 
-ConcurrentLinkenQueue规定了如下几个不变性：
-
-1. 如果队列中存在元素，那么最后一个元素的next为null，并且其在入列时被标记为CASed
+1. 如果队列中存在元素，那么最后一个元素的next为null
 2. 队列中所有未删除的节点的item都不能为null且都能从head节点遍历到
 3. 对于要删除的节点，不是直接将其设置为null，而是先将其item域设置为null（迭代器会跳过item为null的节点）
 4. 允许head和tail更新滞后。即head、tail不总是指向第一个元素和最后一个元素。
 
 ### ConcurrentLinkedQueue的结构
 
-通过ConcurrentLinkedQueue的类图我们来分析下它的结果，类图如下：
+通过ConcurrentLinkedQueue的类图我们来分析下它的结构，类图如下：
 
 ![](http://cdn.zzwzdx.cn/blog/concurrentLinkedQueue类图.png&blog)
 
 由上面ConcurrentLinkedQueue的类图，我们可以看出ConcurrentLinkedQueue是由head和tail节点组成，每个节点（Node）又有元素item和指向下一个节点的引用next组成，节点与节点之间就是通过next进行关联的。默认情况下head和tail相等并且都等于空。我们先来看看ConcurrentLinkedQueue的重要组成部分节点的源码定义。
 
-#### Node定义
+### Node定义
 
 Node源码定义如下：
 
@@ -50,7 +49,7 @@ private static class Node<E> {
     boolean casItem(E cmp, E val) {
         return UNSAFE.compareAndSwapObject(this, itemOffset, cmp, val);
     }
-	//
+	
     void lazySetNext(Node<E> val) {
         UNSAFE.putOrderedObject(this, nextOffset, val);
     }
@@ -84,7 +83,7 @@ private static class Node<E> {
 
 Node的定义比较简单，接下来我们分析ConcurrentLinkedQueue源码
 
-#### ConcurrentLinkedQueue初始化
+### ConcurrentLinkedQueue初始化
 
 ConcurrentLinkedQueue定义了两个构造函数，默认的构造函数是构建一个初始为空的ConcurrentLinkedQueue。构造函数定义如下：
 
@@ -118,9 +117,9 @@ public ConcurrentLinkedQueue(Collection<? extends E> c) {
 
 看完了ConcurrentLinkedQueue的初始化，接下来我们分析ConcurrentLinkedQueue的入队与出队操作。
 
-#### ConcurrentLinkedQueue入队操作
+### ConcurrentLinkedQueue入队操作
 
-对于熟悉链表结构的同学来说，入列是一个很简单的事情，即找到队列的尾节点，然后将尾节点的next赋值为新的节点，然后更新尾节点为新的节点即可。对于单线程，这样操作完全没有问题，但是对于多线程呢？如果一个线程要执行入列操作，那么它必须先找到尾节点，然后更新尾节点的next值，但是在更新next的值之前，如果有另一个线程此时正好已经更新尾节点，那么数据是不是会出现都是的情况？对于多线程下的情况，我们来看看ConcurrentLinkedQueue是如何解决的。我们先看入列操作的offer(E e) 方法，该方法是将指定元素插入到队列尾部，其源码如下：
+对于熟悉链表结构的同学来说，入列是一个很简单的事情，即找到队列的尾节点，然后将尾节点的next赋值为新的节点，然后更新尾节点为新的节点即可。对于单线程，这样操作完全没有问题，但是对于多线程呢？如果一个线程要执行入列操作，那么它必须先找到尾节点，然后更新尾节点的next值，但是在更新next的值之前，如果有另一个线程此时正好已经更新尾节点，那么数据是不是会出现丢失的情况？对于多线程下的情况，我们来看看ConcurrentLinkedQueue是如何解决的。我们先看入列操作的offer(E e) 方法，该方法是将指定元素插入到队列尾部，其源码如下：
 
 ```java
 public boolean offer(E e) {
@@ -132,7 +131,7 @@ public boolean offer(E e) {
     * 死循环，直到新的节点插入为止
     * 1、根据tail节点定位出尾节点（last node）
     * 2、将新节点置为尾节点的下一个节点
-    * 3、casTail更新尾节点
+    * 3、cas Tail更新尾节点
     */
     for (Node<E> t = tail, p = t;;) {
         // p用来表示队列的尾节点，初始情况下等于tail节点
@@ -172,13 +171,13 @@ public boolean offer(E e) {
 1. 定位出尾节点
 2. 使用CAS算法将新入队节点设置成尾节点的next节点，如不成功则重试
 
-第一步定位出尾节点，tail节点并不一定是尾节点，所有每次入列都必须通过tail来找到尾节点。尾节点有可能就是tail节点，也有可能是tail节点的next。循环体中的第一个条件判断就是判断tail节点的next是否为空，若果为空，则表示tail节点就是尾节点，否则表示tail的next节点才是尾节点。
+第一步定位出尾节点，tail节点并不一定是尾节点，所有每次入列都必须通过tail来找到尾节点。尾节点有可能就是tail节点，也有可能是tail节点的next。循环体中的第一个条件判断就是判断tail节点的next是否为空，如果为空，则表示tail节点就是尾节点，否则表示tail的next节点才是尾节点。
 
 第二步设置入队节点为尾节点。p.casNext(null, newNode)方法用于将入队节点设置为当前队列尾节点的next节点，q如果是null表示p是当前队列的尾节点，如果不为null表示有其他线程更新了尾节点，则需要重新获取当前队列的尾节点。
 
-#### tail节点不一定为尾节点的设计意图
+### tail节点不一定为尾节点的设计意图
 
-看到这里，我们可以会疑惑，tail为什么不总是这项最后一个节点，Doug  Lea大神这样设计的好处又是什么？接下来我们先探讨下tail节点不一定为尾节点的设计用意。
+看到这里，我们可以会疑惑，tail为什么不总是最后一个节点，Doug  Lea大神这样设计的好处又是什么？接下来我们先探讨下tail节点不一定为尾节点的设计用意。
 
 如果我们将tail永远的指向尾节点，那么在入列的时候，每次必定要执行`casTail(t, newNode)`这条语句，这就增加了一次volatile变量写操作的开销，而我们知道volatile变量的写操作的开销远大于volatile变量读操作的开销，因此Doug Lea大神的设计是通过增加volatile变量的读操作来减少volatile变量的写操作，这样入队的效率会有所提升。我们不得不佩服Doug Lea 大神的天才设计。
 
@@ -186,7 +185,7 @@ ConcurrentLinkedQueue的入队操作整体逻辑如下图所示：
 
 ![](http://cdn.zzwzdx.cn/blog/入列过程.png&blog)
 
-#### ConcurrentLinkedQueue出队操作
+### ConcurrentLinkedQueue出队操作
 
 出队列就是从队列中返回一个节点元素，并清空这个节点元素的引用。首先我们还是来看看出队列的定义：
 
@@ -222,7 +221,7 @@ public E poll() {
 }
 ```
 
-上面方法主要逻辑就是首先取出队列的头结点，然后判断头结点元素是否为空，若果为空，则表示有另一个线程已经进行了一次出队操作将该节点取走，若果不为空，则使用CAS方法将头结点的item设置成空，如果CAS设置成功，判断p和q是否相等，若果不相等则更新头结点，否则直接返回。如CAS设置失败，则表示出现了并发，需要重新从头结点遍历。下面我们还是来模拟出队列的操作。首先假设队列初始如下：
+上面方法主要逻辑就是首先取出队列的头结点，然后判断头结点元素是否为空，如果为空，则表示有另一个线程已经进行了一次出队操作将该节点取走，如果不为空，则使用CAS方法将头结点的item设置成空，如果CAS设置成功，判断p和q是否相等，如果不相等则更新头结点，否则直接返回。如CAS设置失败，则表示出现了并发，需要重新从头结点遍历。下面我们还是来模拟出队列的操作。首先假设队列初始如下：
 
 ![](http://cdn.zzwzdx.cn/blog/出队列_0.png&blog)
 
@@ -232,7 +231,7 @@ public E poll() {
 
 ![](http://cdn.zzwzdx.cn/blog/出队列_1.png&blog)
 
-此时p指向节点A，因此p.item ！=null ，进行p.casItem(item, null)，若果这个CAS成功，发现p!=h,因此执行updateHead(h, ((q = p.next) != null) ? q : p)，q=p.next此时指向节点B,不为空，则将head CAS更新成节点B，如下所示：
+此时p指向节点A，因此p.item ！=null ，进行p.casItem(item, null)，如果这个CAS成功，发现p!=h,因此执行updateHead(h, ((q = p.next) != null) ? q : p)，q=p.next此时指向节点B,不为空，则将head CAS更新成节点B，如下所示：
 
 ![](http://cdn.zzwzdx.cn/blog/出队列_2.png&blog)
 
@@ -269,7 +268,7 @@ else if (p == q)
 
 ![](http://cdn.zzwzdx.cn/blog/入列_6.png&blog)
 
-#### 总结
+### 总结
 
 ConcurrentLinkedQueue 的非阻塞算法实现可概括为下面 5 点：
 

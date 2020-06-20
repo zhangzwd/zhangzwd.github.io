@@ -13,7 +13,6 @@ original: true
 show_title: juc-priorityBlockingQueue
 date: 2019-10-19 12:10:19
 ---
-
 PriorityBlockingQueue是一个支持优先级的无界队列。默认情况下PriorityBlockingQueue中元素的排列顺序采用自然升序的方式排列。也可以自定义类实现compareTo()方法来执行元素的排列规则，或者在初始化PriorityBlockingQueue时，指定构造参数Comparator来对元素进行排序。需要注意的是PriorityBlockingQueue不能保证同优先级元素的顺序，并且不支持插入null元素也不支持插入非comparable的对象。
 
 PriorityBlockingQueue是基于最小二叉堆实现，对于堆数组中索引为n的节点，其父节点为(n-1)/2，其左右子节点分别为2n+1和2n+2。PriorityBlockingQueue使用ReentrantLock来控制所有公用操作的线程同步，使用基于CAS实现的自旋锁来控制队列的动态扩容，保证了扩容操作不会阻塞take操作的执行。
@@ -124,7 +123,7 @@ PriorityBlockingQueue提供了4种初始化方案，它们分别如下：
             this.comparator = (Comparator < ? super E > ) ss.comparator();
             heapify = false;
         }
-        //若果传入的集合是PriorityBlockingQueue类型，则即不进行堆有序化也不对每个元素进行是否为null的判断
+        //如果传入的集合是PriorityBlockingQueue类型，则即不进行堆有序化也不对每个元素进行是否为null的判断
         else if (c instanceof PriorityBlockingQueue < ? > ) {
             PriorityBlockingQueue < ? extends E > pq =
                 (PriorityBlockingQueue < ? extends E > ) c;
@@ -157,7 +156,7 @@ PriorityBlockingQueue提供了4种初始化方案，它们分别如下：
 
 ### 入列操作
 
-PriorityBlockingQueue的入列操作提供了4中方法，分别如下：
+PriorityBlockingQueue的入列操作提供了4种方法，分别如下：
 
 * `add(E e):`调用`offer`方法实现
 * `offer(E e):`队列满时返回false；由于为无界队列，因而不会返回false；
@@ -194,7 +193,7 @@ public boolean offer(E e) {
     try {
     	//获取比较器
         Comparator < ? super E > cmp = comparator;
-        //若果比较器为null,则调用siftUpComparable方法
+        //如果比较器为null,则调用siftUpComparable方法
         if (cmp == null)
             siftUpComparable(n, e, array);
         else
@@ -225,7 +224,7 @@ public boolean offer(E e, long timeout, TimeUnit unit) {
 }
 ```
 
-入列操作实际只有一个`offer(E e)`方法，而`offer(E e)`方法的核心逻辑实在`siftUpComparable`方法和`siftUpUsingComparator`方法里面。下面我们来分析这2个方法。
+入列操作实际只有一个`offer(E e)`方法，而`offer(E e)`方法的核心逻辑是在`siftUpComparable`方法和`siftUpUsingComparator`方法里面。下面我们来分析这2个方法。
 
 ####  siftUpComparable 和 siftUpUsingComparator 操作
 
@@ -252,7 +251,7 @@ private static < T > void siftUpComparable(int k, T x, Object[] array) {
         if (key.compareTo((T) e) >= 0)
             //如果x比根元素大，则跳出while循环
             break;
-        //否则，将parent处的节点方到k的位置
+        //否则，将parent处的节点放到k的位置
         array[k] = e;
         //将parent给k
         k = parent;
@@ -293,7 +292,7 @@ private static < T > void siftUpUsingComparator(int k, T x, Object[] array,
 上述操作完成后，k=2，x=4。x继续和k的父节点比价，即x和5进行比价，发现x<5,则将5放置到k的位置。如下图所示：
 
 ![](http://cdn.zzwzdx.cn/blog/入列操作3.png&blog)
-上述操作完成后，k=0,x=4。则直接将x放置到k的位置。如下锁所示:
+上述操作完成后，k=0,x=4。则直接将x放置到k的位置。如下所示:
 
 ![](http://cdn.zzwzdx.cn/blog/入列操作4.png&blog)
 此时队列中数据在数组中的展示顺序为[4,6,5,8,9,10,7]
@@ -360,7 +359,7 @@ public E poll(long timeout, TimeUnit unit) throws InterruptedException {
 private E dequeue() {
     //n为最后一个元素的下标
     int n = size - 1;
-    //若果n<0，表示队列中没有元素，返回null
+    //如果n<0，表示队列中没有元素，返回null
     if (n < 0)
         return null;
     else {
@@ -401,7 +400,7 @@ private E dequeue() {
  * @return       
  */
 private static < T > void siftDownComparable(int k, T x, Object[] array, int n) {
-    //确保队列中曾在元素
+    //确保队列中存在元素
     if (n > 0) {
         Comparable < ? super T > key = (Comparable < ? super T > ) x;
         //队列中元素个数的一半
@@ -501,7 +500,7 @@ private void tryGrow(Object[] array, int oldCap) {
             int newCap = oldCap + ((oldCap < 64) ?
                 (oldCap + 2) : // grow faster if small
                 (oldCap >> 1));
-            //若果扩容后的大小比最大的队列长度还要大
+            //如果扩容后的大小比最大的队列长度还要大
             if (newCap - MAX_ARRAY_SIZE > 0) { // possible overflow
                 int minCap = oldCap + 1;
                 //如果minCap<0,表示已经超出了int的范围，获取minCap > MAX_ARRAY_SIZE，则抛出OutOfMemoryError异常
@@ -530,6 +529,3 @@ private void tryGrow(Object[] array, int oldCap) {
 ```
 
 我们看到，扩容操作在计算新数组的长度的时候，使用的是CAS的方式，并没有使用重入锁。这是为了如果在扩容时，有出列操作，则没有必要进行扩容，省去了不必要的开销。
-
-
-

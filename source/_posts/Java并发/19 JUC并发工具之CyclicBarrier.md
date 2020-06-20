@@ -13,10 +13,9 @@ original: true
 show_title: juc-cyclicbarrier
 date: 2019-09-18 13:33:42
 ---
-
 CyclicBarrier顾名思义就是可循环使用的屏障。它主要实现的功能是让一组线程到达一个屏障(也可以叫同步点)时阻塞，直到最后一个线程到达屏障时，屏障才会放行，所有被屏障拦截的线程才可以继续运行。
 
-#### CyclicBarrier结构
+### CyclicBarrier结构
 
 CyclicBarrier结构如下：
 
@@ -41,7 +40,7 @@ public CyclicBarrier(int parties, Runnable barrierAction) {
 
 CyclicBarrier没有无参构造函数，它最少需要传递一个int变量来初始化拦截线程数量的个数。barrierAction它是一个实现了Runnable接口的参数，该参数不是必须的，它的作用是当屏障开发前，执行barrierAction参数中的run方法。
 
-#### await方法
+### await方法
 
 await方法是CyclicBarrier中的关键方法，每个线程在调用await方法告诉CyclicBarrier该线程已经到达屏障了，然后线程被阻塞，直到最后一个线程到达屏障后，屏障才会放行，线程开始执行。await方法源码如下：
 
@@ -73,7 +72,7 @@ TimeoutException {
 		//当前线程被打断,抛出中断异常
         if (Thread.interrupted()) {
             //将损坏状态设置为true
-            //并通知其他等待在次栅栏上的线程
+            //并通知其他等待在此栅栏上的线程
             breakBarrier();
             throw new InterruptedException();
         }
@@ -101,7 +100,7 @@ TimeoutException {
         // loop until tripped, broken, interrupted, or timed out
         for (;;) {
             try {
-                //如果没有时间限制，则直接进入等待状态，知道被唤醒
+                //如果没有时间限制，则直接进入等待状态，直到被唤醒
                 if (!timed)
                     trip.await();
                 //如果有时间限制，则等待指定时间
@@ -153,9 +152,9 @@ TimeoutException {
 5. 其它的线程等待在栅栏处超时；
 6. 其它线程调用了cyclicBarrier的reset()方法。reset()方法将cyclicBarrier重置为初始化状态。
 
-####  Generation对象
+###  Generation对象
 
-在上面`dowait()`方法里面，我们可以看到其方法的实现是借助了Generation对象的，那么Generation是什么呢？，他究竟起到了什么作用了？下面我们就来看看Generation。
+在上面`dowait()`方法里面，我们可以看到其方法的实现是借助了Generation对象，那么Generation是什么呢？他究竟起到了什么作用了？下面我们就来看看Generation。
 
 Generation在CyclicBarrier源码中给出的定义如下：
 
@@ -182,7 +181,7 @@ private void breakBarrier() {
 
 在breakBarrier()中除了将broken设置为true，还会调用signalAll将在CyclicBarrier处于等待状态的线程全部唤醒。
 
-当所有线程都已经到达barrier处（index == 0），则会通过nextGeneration()进行更新换地操作，在这个步骤中，做了三件事：唤醒所有线程，重置count，generation。
+当所有线程都已经到达barrier处（index == 0），则会通过nextGeneration()进行更新换的操作，在这个步骤中，做了三件事：唤醒所有线程、重置count和换代generation。
 
 ```java
 private void nextGeneration() {
@@ -192,11 +191,11 @@ private void nextGeneration() {
 }
 ```
 
-#### CyclicBarrier和CountDownLatch的区别
+### CyclicBarrier和CountDownLatch的区别
 
 CountDownLatch的计数器只能使用一次，并且它是一个线程等待N个线程执行完后开始执行，而CyclicBarrier的计数器可以重复使用，且N个线程之间相互等待，任何一个线程完成之前，所有的线程都必须等待。
 
-#### 总结
+### 总结
 
 * CyclicBarrier 的用途是让一组线程互相等待，直到全部到达某个公共屏障点才开始继续工作。
 * CyclicBarrier 是可以重复利用的。

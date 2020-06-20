@@ -14,7 +14,7 @@ show_title: juc-linkedBlockingQueue
 date: 2019-10-08 14:16:16
 ---
 
-LinkedBlockingQueue与ArrayBlockingQueue相对应也是一个有界队列并且同样遵守先进先出规则(FIFO)，它的默认和最大长度为`Integer.MAX_VALUE`，从名称可以得知，LinkedBlockingQueue底层是有链表实现的。下面我们对LinkedBlockingQueue的源码进行分析。
+LinkedBlockingQueue与ArrayBlockingQueue相对应也是一个有界队列并且同样遵守先进先出规则(FIFO)，它的默认和最大长度为`Integer.MAX_VALUE`，从名称可以得知，LinkedBlockingQueue底层是用链表实现的。下面我们对LinkedBlockingQueue的源码进行分析。
 
 在分析LinkedBlockingQueue之前，我们先来了解一下LinkedBlockingQueue中几个重要的成员变量。
 
@@ -110,7 +110,7 @@ LinkedBlockingQueue提供了3种构造方法，它们分别如下：
 
 ### LinkedBlockingQueue入列操作
 
-LinkedBlockingQueue提供了3中入列操作，他们分别是：
+LinkedBlockingQueue提供了3种入列操作，他们分别是：
 
 * `put(E e) :`阻塞的向队列中插入元素，如果队列已满，则阻塞线程
 * ` offer(E e, long timeout, TimeUnit unit):`等待超时的向队列中插入元素，如果超时则返回false
@@ -144,7 +144,7 @@ public void put(E e) throws InterruptedException {
         }
         //队列未满，向队列中添加元素
         enqueue(node);
-        //返回count中每自加之前的值
+        //返回count中没自加之前的值
         c = count.getAndIncrement();
         //判断元素是否已满
         if (c + 1 < capacity)
@@ -182,7 +182,7 @@ public boolean offer(E e) {
     if (e == null) throw new NullPointerException();
     //获取队列中元素的个数
     final AtomicInteger count = this.count;
-    //若果队列满了，则返回false
+    //如果队列满了，则返回false
     if (count.get() == capacity)
         return false;
     int c = -1;
@@ -239,7 +239,7 @@ public boolean offer(E e, long timeout, TimeUnit unit) throws InterruptedExcepti
             //否则进行等待指定时间
             nanos = notFull.awaitNanos(nanos);
         }
-        //若果队列未满，则将元素添加到队列中去
+        //如果队列未满，则将元素添加到队列中去
         enqueue(new Node < E > (e));
         c = count.getAndIncrement();
         if (c + 1 < capacity)
@@ -274,7 +274,7 @@ private void enqueue(Node < E > node) {
 LinkedBlockingQueue同样提供了3个出列操作，它们分别是：
 
 * `take():`阻塞式的出列，如果队列为空，即线程进入等待队列等待
-* `poll(long timeout, TimeUnit unit):`超时等待出列，若果队列为空，那么线程等待指定时长，超过指定时长后立即返回
+* `poll(long timeout, TimeUnit unit):`超时等待出列，如果队列为空，那么线程等待指定时长，超过指定时长后立即返回
 * `E poll():`简单的处理，如果队列为空，则返回false
 
 下面我们来对这几个出列操作进行分析。
@@ -294,7 +294,7 @@ public E take() throws InterruptedException {
     //加锁
     takeLock.lockInterruptibly();
     try {
-        //若果队列为空，则线程进入等待队列阻塞
+        //如果队列为空，则线程进入等待队列阻塞
         while (count.get() == 0) {
             notEmpty.await();
         }
@@ -303,21 +303,21 @@ public E take() throws InterruptedException {
         //1、获取取出元素之前队列中元素的个数
         //2、将count的值建一
         c = count.getAndDecrement();
-        //若果队列中还曾在元素，则唤醒其它出列操作阻塞的线程
+        //如果队列中还存在元素，则唤醒其它出列操作阻塞的线程
         if (c > 1)
             notEmpty.signal();
     } finally {
         //释放锁
         takeLock.unlock();
     }
-    //若果队列中没有元素了，则唤醒入列操作阻塞的线程
+    //如果队列中没有元素了，则唤醒入列操作阻塞的线程
     if (c == capacity)
         signalNotFull();
     return x;
 }
 ```
 
-`take()`操作的逻辑比较简单，上面注释已经写的比较清楚了。出列操作的核心方法dequeue在看我所有出列操作的方法再来分析。
+`take()`操作的逻辑比较简单，上面注释已经写的比较清楚了。出列操作的核心方法dequeue在看过所有出列操作的方法再来分析。
 
 ##### poll(long timeout, TimeUnit unit)出列操作：
 
@@ -334,26 +334,26 @@ public E poll(long timeout, TimeUnit unit) throws InterruptedException {
     //加锁
     takeLock.lockInterruptibly();
     try {
-        //若果队列为空，则阻塞nanos纳秒
+        //如果队列为空，则阻塞nanos纳秒
         //时间超过nanos纳秒后，直接返回false
         while (count.get() == 0) {
             if (nanos <= 0)
                 return null;
             nanos = notEmpty.awaitNanos(nanos);
         }
-        //若果队列不为空，则出列
+        //如果队列不为空，则出列
         x = dequeue();
         //1、获取取出元素之前队列中元素的个数
         //2、将count的值建一
         c = count.getAndDecrement();
-        //若果队列中还曾在元素，则唤醒其它出列操作阻塞的线程
+        //如果队列中还存在元素，则唤醒其它出列操作阻塞的线程
         if (c > 1)
             notEmpty.signal();
     } finally {
         //释放锁
         takeLock.unlock();
     }
-    ////若果队列中没有元素了，则唤醒入列操作阻塞的线程
+    ////如果队列中没有元素了，则唤醒入列操作阻塞的线程
     if (c == capacity)
         signalNotFull();
     return x;
@@ -370,7 +370,7 @@ public E poll(long timeout, TimeUnit unit) throws InterruptedException {
 public E poll() {
     //获取队列中元素的个数
     final AtomicInteger count = this.count;
-    //若果队列中没有元素，则返回null
+    //如果队列中没有元素，则返回null
     if (count.get() == 0)
         return null;
     E x = null;
@@ -380,8 +380,8 @@ public E poll() {
     //加锁
     takeLock.lock();
     try {
-        //若果队列中有元素则获取元素
-        //获取元素后，如果队列中还曾在元素，则通知其它阻塞的处理操心线程
+        //如果队列中有元素则获取元素
+        //获取元素后，如果队列中还存在元素，则通知其它阻塞的处理操心线程
         if (count.get() > 0) {
             x = dequeue();
             c = count.getAndDecrement();
@@ -392,7 +392,7 @@ public E poll() {
         //释放锁
         takeLock.unlock();
     }
-    //若果队列中没有元素，则唤醒入列操作的线程
+    //如果队列中没有元素，则唤醒入列操作的线程
     if (c == capacity)
         signalNotFull();
     return x;
@@ -427,7 +427,7 @@ LinkedBlockingQueue提供了查看头结点元素的方法，其源码如下：
 
 ```java
 public E peek() {
-    //若果队列中没有元素，则返回null
+    //如果队列中没有元素，则返回null
     if (count.get() == 0)
         return null;
     //获取出队列操作的锁
@@ -492,7 +492,7 @@ public boolean remove(Object o) {
 void unlink(Node < E > p, Node < E > trail) {
     //将待删除节点的item设置成null
     p.item = null;
-    //将p的next赋值给trail的next,即端口了p节点
+    //将p的next赋值给trail的next,即断开了p节点
     trail.next = p.next;
     //如要待删除的节点是尾节点，则将p节点的前驱节点设置成新的尾节点
     if (last == p)
@@ -518,6 +518,4 @@ LinkedBlockingQueue的入列、出列和删除节点的逻辑都比较简单。�
     * ArrayBlockingQueue内部使用数组实现，LinkedBlockingQueue内部使用链表实现。
     * ArrayBlockingQueue在构造时需要传递初始容量大小，LinkedBlockingQueue在构造时可以不知道初始容量，当不指定初始容量时，其大小默认为Integer.MAX_VALUE。
     * ArrayBlockingQueue中锁是没有分离的，LinkedBlockingQueue中的锁是分离的，即生产用的是putLock，消费是takeLock。
-
-
 

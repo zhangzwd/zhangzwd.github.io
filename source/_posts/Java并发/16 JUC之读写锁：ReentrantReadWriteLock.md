@@ -16,15 +16,17 @@ date: 2019-09-08 14:12:11
 
 #### ReentrantReadWriteLock介绍
 
+### ReentrantReadWriteLock介绍
+
 读写锁的特性是在同一时刻，可以允许多个读线程访问，但是在写线程访问时，所有读线程和其它写线程都会被阻塞。读写锁内部维护了一对锁，它们分别是一个读锁和一个写锁。通过读锁和写锁的分离，使得并发性相比于一般的排他锁有了很大的提升。读写锁简化了读写交互场景的编程方式，在读写锁出现之前，如果要实现读写锁的功能，就要使用Java的等待通知机制，即当写操作时，所有晚于写操作的读操作均会进入等待状态，当写操作完成并通知之后，所有等待的读操作才能继续执行，这样做的目的是使得所有的读操作都能够获取正确的值，不会出现脏读。
 
 一般情况下，读写锁的性能都会比排他锁好，因为在大多数场景中，读操作要多于写操作，在读操作多于写操作的情况下，读写锁能够提供比排它锁更好的并发和吞吐量。Java并发包提供的读写锁的实现是ReentrantReadWriteLock类，它的特性如下：
 
-> * 公平选择性：ReentrantReadWriteLock提供了公平锁和非公平锁的获取。默认是非公平锁。
-> * 重进入：ReentrantReadWriteLock支持重进入，读锁能够再次获取读锁，写锁也能够再次获取写锁。
-> * 锁降级：遵循获取写锁、获取读锁再释放写锁的顺序，写锁能够降级为读锁。
+* 公平选择性：ReentrantReadWriteLock提供了公平锁和非公平锁的获取。默认是非公平锁。
+* 重进入：ReentrantReadWriteLock支持重进入，读锁能够再次获取读锁，写锁也能够再次获取写锁。
+* 锁降级：遵循获取写锁、获取读锁再释放写锁的顺序，写锁能够降级为读锁。
 
-#### ReentrantReadWriteLock结构
+### ReentrantReadWriteLock结构
 
 ![ReentrantReadWriteLock结构](http://cdn.zzwzdx.cn/blog/ReentrantReadWriteLock结构.png&blog)
 
@@ -33,17 +35,17 @@ date: 2019-09-08 14:12:11
 * ReentrantReadWriteLock类实现了ReadWriteLock和Serializable接口。
 * ReentrantReadWriteLock类中维护了ReadLock，WriteLock，Sync,NonfairSync和FairSync这个几个静态内部类。
 * NonfairSync和FairSync又是继承Sync这个静态内部类。
-* Sync这个类中又维护了HoldCounter和ThreadLocalHoldCounter这2个内部类，并且基础了AbstractQueuedSynchronizer
+* Sync这个类中又维护了HoldCounter和ThreadLocalHoldCounter这2个内部类，并且继承了AbstractQueuedSynchronizer
 
-#### 读写锁Sync对于AQS的使用
+### 读写锁Sync对于AQS的使用
 
 读写锁中`Sync`类是继承于`AQS`，并且主要使用上文介绍的数据结构中的`state`及`waitStatus`变量进行实现。 
 实现读写锁与实现普通互斥锁的主要区别在于需要分别记录读锁状态及写锁状态，并且等待队列中需要区别处理两种加锁操作。 
-`Sync`使用`state`变量同时记录读锁与写锁状态，将`int`类型的`state`变量分为高16位与第16位，高16位记录读锁状态，低16位记录写锁状态，如下图所示：![读写锁状态](http://cdn.zzwzdx.cn/blog/读写锁状态.png&blog)
+`Sync`使用`state`变量同时记录读锁与写锁状态，将`int`类型的`state`变量分为高16位与低16位，高16位记录读锁状态，低16位记录写锁状态，如下图所示：![读写锁状态](http://cdn.zzwzdx.cn/blog/读写锁状态.png&blog)
 
-####  ReentrantReadWriteLock源码分析
+###  ReentrantReadWriteLock源码分析
 
-##### 写锁的获取与释放
+#### 写锁的获取与释放
 
 写锁是一个支持重进入的排他锁，如果线程已经获取了写锁，则增加写状态。如果当前线程在获取写锁时，读锁已经被获取（读状态不为0）或者该线程不是已经获取到写锁的线程，则当前线程进入等待状态。获取写锁的代码如下：
 
@@ -54,7 +56,7 @@ public void lock() {
 }
 ```
 
-sync是继承了AbstractQueuedSynchronizer类的类的实例，因此调用acquire(1)方法实际是调用AbstractQueuedSynchronizer类中的acquire(int arg) 方法。其源码如下：
+sync是继承了AbstractQueuedSynchronizer类的实例，因此调用acquire(1)方法实际是调用AbstractQueuedSynchronizer类中的acquire(int arg) 方法。其源码如下：
 
 ```java
 public final void acquire(int arg) {
@@ -64,7 +66,7 @@ public final void acquire(int arg) {
 }
 ```
 
-在AQS系列文章中，分析了acquire(int arg)方法的实现，这里就不在赘述了。我们知道了tryAcquire(arg)方法是自定义同步器自己实现的方法。因此tryAcquire(arg) 方法的源码如下：
+在AQS系列文章中，分析了acquire(int arg)方法的实现，这里就不再赘述了。我们知道了tryAcquire(arg)方法是自定义同步器自己实现的方法。因此tryAcquire(arg) 方法的源码如下：
 
 ```java
 protected final boolean tryAcquire(int acquires) {
@@ -86,7 +88,7 @@ protected final boolean tryAcquire(int acquires) {
         // 如果重入读锁的次数超过限制，抛出异常
         if (w + exclusiveCount(acquires) > MAX_COUNT)
             throw new Error("Maximum lock count exceeded");
-        // 设置同步状态为写锁获重入次数
+        // 设置同步状态为写锁的重入次数
         setState(c + acquires);
         // 获取写锁成功
         return true;
@@ -116,9 +118,9 @@ static int exclusiveCount(int c) {
 
 从上面源码我们可以看到，读写锁中写状态就是同步状态state的低16位。这也可以解释为什么`w + exclusiveCount(acquires) > MAX_COUNT`条件会抛出异常的原因。
 
-写锁的释放与ReentrantLock的释放过程基本类似，每次释放均减少写状态，当写状态为0时，表示写锁已经被释放，从而等待的读写线程能够继续访问读写锁。同步前次写线程的修改对后续的读写线程可见。
+写锁的释放与ReentrantLock的释放过程基本类似，每次释放均减少写状态，当写状态为0时，表示写锁已经被释放，从而等待的读写线程能够继续访问读写锁。同步前一次写线程的修改的值对后续的读写线程可见。
 
-##### 读锁的获取与释放
+#### 读锁的获取与释放
 
 读锁是一个支持重进入的共享锁，同一时刻它能被多个线程同时获取，在没有其它写线程访问时，读锁总会被获取成功。如果当前线程已经获取了读锁，则增加读状态。如果当前线程在获取读锁时，写锁已经被其它线程获取，则进入等待状态。读锁获取源码如下：
 
@@ -128,7 +130,7 @@ protected final int tryAcquireShared(int unused) {
     Thread current = Thread.currentThread();
     // 获取同步状态
     int c = getState();
-    // 若果写状态不为0，则表示存在写锁。且当前线程不是持有写锁的线程，则获取读锁失败
+    // 如果写状态不为0，则表示存在写锁。且当前线程不是持有写锁的线程，则获取读锁失败
     if (exclusiveCount(c) != 0 &&
         getExclusiveOwnerThread() != current)
         return -1;
@@ -174,20 +176,19 @@ final int fullTryAcquireShared(Thread current) {
         int c = getState();
         // 判断写状态是否为0
         if (exclusiveCount(c) != 0) {
-            // 若果写状态不为0，且当前线程不是持有写锁的线程，则获取读锁失败
+            //如果写状态不为0，且当前线程不是持有写锁的线程，则获取读锁失败
             if (getExclusiveOwnerThread() != current)
                 return -1;
             // 否则，当前线程持有写锁，在这里阻塞将会导致死锁
         /**
         * 判断读线程是否被阻塞 
         * 这里readerShouldBlock()返回true的条件分为2种：
-        * 1.当是公平锁时，readerShouldBlock()返回true的条件是当前线程坐在的节点有前驱节点
-        * 2.当是非公平锁时，readerShouldBlock()返回true的条件是等待队列中，头结点的下一个节点是独占节点，即为
-        *   写锁等待。
+        * 1.当是公平锁时，readerShouldBlock()返回true的条件是当前线程所在的节点有前驱节点
+        * 2.当是非公平锁时，readerShouldBlock()返回true的条件是等待队列中，头结点的下一个节点是独占节点，即为写锁等待。
         * 下面的一段代码，在读线程需要被阻塞的情况下，需要考虑读写锁的重入性
         */
         } else if (readerShouldBlock()) {
-           // 当当前显示是第一个获取读锁的线程时，锁重入不需要等待
+           // 当前显示是第一个获取读锁的线程时，锁重入不需要等待
             if (firstReader == current) {
                 // assert firstReaderHoldCount > 0;
             } else {
@@ -240,7 +241,7 @@ final int fullTryAcquireShared(Thread current) {
 
 
 
-##### 读锁的释放
+#### 读锁的释放
 
 在ReadLock中调用unlock()方法即释放读锁，unlock()方法定义如下：
 
@@ -266,7 +267,7 @@ protected final boolean tryReleaseShared(int unused) {
             // 否则 第一个获取读锁的线程的获取读锁的次数减一
             firstReaderHoldCount--;
     } else {
-        // 若果当前线程不是第一个获取读锁的线程
+        // 如果当前线程不是第一个获取读锁的线程
         // 获取线程计数的缓存
         HoldCounter rh = cachedHoldCounter;
         // 如果rh == null 获取 rh 不是当前线程的HoldCounter，则获取当前线程的HoldCounter
@@ -301,7 +302,7 @@ protected final boolean tryReleaseShared(int unused) {
 }
 ```
 
-#### 锁降级
+### 锁降级
 
 锁降级指的是写锁降级为读锁。锁降级需要遵循先获取写锁，然后获取读锁，在释放写锁的次序。需要注意的是，如果线程先获取写锁，然后释放写锁，再获取读锁，这种分段完成的过程不能称为锁降级。
 
@@ -315,4 +316,4 @@ if (exclusiveCount(c) != 0) {
 
 上面的代码的意思是：当写锁被持有时，如果持有该锁的线程不是当前线程，就返回 “获取锁失败”，反之就会继续获取读锁。称之为锁降级。
 
-锁降级中读锁的获取是否是必须要的呢？答案是**必要的**。主要是为了保证数据的可见性，试想一下，加入当前线程（A）直接释放写锁而不获取读锁，此时另一个线程（B）获取了写锁并且修改了数据，那么线程B修改后的数据是不会对线程A可见的。若果获取了读锁，那么线程B将会因为写锁的存在而被阻塞，知道当前线程A使用数据并释放读锁之后，线程B才能够获取写锁对数据进行修改。
+锁降级中读锁的获取是否是必须要的呢？答案是**必要的**。主要是为了保证数据的可见性，试想一下，假如当前线程（A）直接释放写锁而不获取读锁，此时另一个线程（B）获取了写锁并且修改了数据，那么线程B修改后的数据是不会对线程A可见的。如果获取了读锁，那么线程B将会因为写锁的存在而被阻塞，直到当前线程A使用数据并释放读锁之后，线程B才能够获取写锁对数据进行修改。

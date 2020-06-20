@@ -13,19 +13,19 @@ special: JUC
 original: true
 date: 2019-09-04 10:07:35
 ---
-在前面的文章中介绍了独占式同步状态的获取和释放以及共享式同步状态的获取和释放，但是在前面的文章中并没有介绍线程的阻塞和唤醒，在这篇文章中LZ将介绍在AQS中线程的阻塞和唤醒。
-在线程获取同步状态失败后，会加入到CHL队列中去，并且该节点会自旋式的不断的获取同步状态，在获取同步状态的过程中，需要判断当前线程是否需要被阻塞。其主要方法在acquireQueued(final Node node, int arg)方法的定义里面：
+在前面的文章中介绍了独占式同步状态的获取和释放以及共享式同步状态的获取和释放，在前面的文章中并没有介绍线程的阻塞和唤醒，在这篇文章中LZ将介绍在AQS中线程的阻塞和唤醒。
+在线程获取同步状态失败后，会加入到CHL队列中去，并且该节点会自旋式的不断的获取同步状态，在获取同步状态的过程中，需要判断当前线程是否需要被阻塞。其主要方法在`acquireQueued(final Node node, int arg)`方法的定义里面：
 
 ```java
 if (shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt())
     interrupted = true;
 ```
-通过这段代码可以看出，线程在获取同步状态失败后，并不是立马进入等待状态，而是需要判断当前线程是否需要被阻塞。检查是否需要阻塞的方法shouldParkAfterFailedAcquire(p, node)，其定义如下：
+通过这段代码可以看出，线程在获取同步状态失败后，并不是立马进入等待状态，而是需要判断当前线程是否需要被阻塞。检查是否需要阻塞的方法`shouldParkAfterFailedAcquire(p, node)`，其定义如下：
 ```java
 private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
     // 获取前驱节点的等待状态
     int ws = pred.waitStatus;
-    // 若果等待状态的值为SIGNAL,则返回true 表示当前线程需要等待
+    // 如果等待状态的值为SIGNAL,则返回true 表示当前线程需要等待
     if (ws == Node.SIGNAL)
         return true;
     if (ws > 0) {
@@ -38,7 +38,8 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
         } while (pred.waitStatus > 0);
         pred.next = node;
     } else {
-         /* 前驱节点为 PROPAGATE或者CONDITION 将前驱节点的等待状态以CAS的方式
+         /* 
+         * 前驱节点为 PROPAGATE或者CONDITION 将前驱节点的等待状态以CAS的方式
          * 更新为SIGNAL
          */
         compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
@@ -50,7 +51,7 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
 
 1. 如果当前节点的前驱节点的等待状态为SIGNAL，则返回true
 2. 如果当前节点的前驱节点的等待状态为CALCLE，则表示该线程的前驱节点已经被中断或者超时，需要从CHL中删除，直到回溯到ws <= 0,返回false
-3. 若果当前节点的前驱节点的等待状态为非SIGNAL,非CANCLE，则以CAS的方式设置其前驱节点为的状态为SIGNAL，返回false.
+3. 如果当前节点的前驱节点的等待状态为非SIGNAL,非CANCLE，则以CAS的方式设置其前驱节点为的状态为SIGNAL，返回false.
 
 当 shouldParkAfterFailedAcquire(Node pred, Node node)方法返回true时，会执行 parkAndCheckInterrupt()方法。该方法定义如下：
 ```java
@@ -118,13 +119,13 @@ private Node enq(final Node node) {
 在上面代码中我们可以看到，将节点添加到尾部是一个CAS操作，但是t.next = node 这个操作不是线程安全的，如果一个线程在执行CAS添加尾部之后正好有线程释放了同步状态，这个时候如果是从head到tail的遍历，则会出现中间断裂的情况，而从尾部回溯是一定可以遍历到所有节点的。
 上面线程的唤醒和等待都是通过LockSupport工具类中的方法来实现的，我们来看看LockSupport这个工具类的。
 
-#### LockSupport
+### LockSupport
 
-#####  1.LockSupport介绍
+####  LockSupport介绍
 LockSupport是用于创建锁和其他同步类的基本线程阻塞原语。
 LockSupport定义了一组以park开头的方法用来阻塞线程，以及以unpark(Thread thread)方法来唤醒一个线程。park方法和unpark方法提供了阻止和解除阻塞线程的有效手段，该方法不会遇到Threaad.suspend和Thread.resum方法导致的死锁问题。
 
-##### 2.LockSupport方法列表
+#### LockSupport方法列表
 
 * getBlocker(Thread t) ：返回提供给最近调用尚未解除阻塞的park 方法调用的 blocker 对象，如果调用不阻止，则返回null
 * park() : 禁止当前线程进行线程调度，除非许可证可用。
@@ -135,17 +136,20 @@ LockSupport定义了一组以park开头的方法用来阻塞线程，以及以un
 * parkUntil(Object blocker, long deadline) ：禁止当前线程进行线程调度，直到指定的截止时间，除非许可证可用。
 * unpark(Thread thread) ：为给定的线程提供许可证（如果尚未提供）。
 
-上述方法中参数 blocker 是用来标识当前线程在等待的对象，改对象主要用于问题的排查和系统给的监控。
+上述方法中参数 blocker 是用来标识当前线程在等待的对象，该对象主要用于问题的排查和系统给的监控。
 
 接下来我们在看看park和unpark方法的定义：
-park：
+
+#### park：
+
 ```java
 public static void park() {
     UNSAFE.park(false, 0 L);
 }
 ```
 
-unpark：
+#### unpark：
+
 ```java
 public static void unpark(Thread thread) {
     if (thread != null)

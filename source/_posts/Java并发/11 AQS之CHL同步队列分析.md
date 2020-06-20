@@ -13,15 +13,16 @@ show_title: aqs-chl-synchronization-queue-analysis
 original: true
 date: 2019-08-28 14:30:43
 ---
-上一章LZ在分析[AQS的工作原理](https://www.zzwzdx.cn/JUC/how-aqs-works/)时，使用了一张图来解释了AQS独占模式的工作原理，在图中LZ画了一个CHL同步队列，这CHL同步队列就是AQS内部维护的一个FIFO双向队列。AQS依赖这个双向队列来完成同步状态的管理。如果当前线程获取同步状态失败，AQS将会将当前线程以及等待状态信息构建成一个节点（Node）并将其加入到同步队列中，同时会阻塞当前线程。当同步状态释放时，会把首节点中的线程唤醒，使其再次获取同步状态。
+### AQS之CHL同步队列分析
+上一章LZ在分析AQS的工作原理时，使用了一张图来解释了AQS独占模式的工作原理，在图中LZ画了一个CHL同步队列，这个CHL同步队列就是AQS内部维护的一个FIFO双向队列。AQS依赖这个双向队列来完成同步状态的管理。如果当前线程获取同步状态失败，AQS将会将当前线程以及等待状态信息构建成一个节点（Node）并将其加入到同步队列中，同时会阻塞当前线程。当同步状态释放时，会把首节点中的线程唤醒，使其再次获取同步状态。
 在CHL中节点（Node）用来保存获取同步状态失败的线程（thread）、等待状态（waitStatus）、前驱节点（prev）和后继节点（next）。
 AQS中内部维护的Node节点源码如下：
 
 ```java
 static final class Node {
-    /** 标记表示节点正在共享模式中等待 */
+    /** 表示节点正在共享模式中等待 */
     static final Node SHARED = new Node();
-    /** 标记表示节点正在独占模式下等待 */
+    /** 表示节点正在独占模式下等待 */
     static final Node EXCLUSIVE = null;
 
     /** 
@@ -40,7 +41,7 @@ static final class Node {
     
     /** 
       * 节点在等待队列中，节点线程等待在Condition上，当其他线程对Condition调用了signal()方法 
-     *  后，该节点将会中等待队列中转移到同步队列中，加入到对同步状态的获取 
+     *  后，该节点将会将等待队列中转移到同步队列中，加入到对同步状态的获取 
      */
     static final int CONDITION = -2;
     
@@ -121,13 +122,13 @@ static final class Node {
 ```
 
 节点（Node）是构成CHL的基础，同步器拥有首节点（head）和尾节点（tail）,没有成功获取同步状态的线程会构建成一个节点并加入到同步器的尾部。CHL的基本结构如下：
-![](http://cdn.zzwzdx.cn/blog/CHL基本结构_1.png&blog)
+![CHL基本结构](http://cdn.zzwzdx.cn/blog/CHL基本结构.png&blog)
 
 图中：**compareAndSetTail(Node expect,Node update)** 方法是同步器为了保证线程安全的加入到CHL的尾部提供的一个基于CAS算法的方法。
 
 
-##### 入列
-&emsp;&emsp;比较简单的，无非就是当前队列中的尾节点指向新节点，新节点的prev指向队列中的尾节点，然后将同步器的tail节点指向新节点。在AQS中入列的源码如下：
+### 入列
+从数据结构上出发，入列是比较简单的，无非就是当前队列中的尾节点指向新节点，新节点的prev指向队列中的尾节点，然后将同步器的tail节点指向新节点。在AQS中入列的源码如下：
 ```java
 
 /**
@@ -160,7 +161,7 @@ private Node addWaiter(Node mode) {
  * @return node's predecessor
  */
 private Node enq(final Node node) {
-    // 死循环 知道将节点插入到队列中为止
+    // 死循环 直到将节点插入到队列中为止
     for (;;) {
         Node t = tail;
         // 如果队列为空，则首先添加一个空节点到队列中
@@ -186,6 +187,6 @@ CHL入列的过程如下：
 ![CHL入列的过程](http://cdn.zzwzdx.cn/blog/CHL入列的过程.png&blog)
 
 
-##### 出列
-&emsp;&emsp;同步队列遵循FIFO规范状态后，将会唤醒后继节点的线程，并且后继节点的线程在获取到同步状态后将会将自己设置为首节点。因为设置首节点是通过获取同步状态成功的线程来完成的，因此设置头结点的方法并不需要使用CAS来保证，因为只有一个线程能获取到同步状态。CHL出列的过程如下：
+### 出列
+同步队列遵循FIFO规范，首节点的线程在释放同步状态后，将会唤醒后继节点的线程，并且后继节点的线程在获取到同步状态后将会将自己设置为首节点。因为设置首节点是通过获取同步状态成功的线程来完成的，因此设置头结点的方法并不需要使用CAS来保证，因为只有一个线程能获取到同步状态。CHL出列的过程如下：
 ![CHL出列的过程](http://cdn.zzwzdx.cn/blog/CHL出列的过程.png&blog)

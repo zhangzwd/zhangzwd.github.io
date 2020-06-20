@@ -13,8 +13,7 @@ original: true
 show_title: juc-delayQueue
 date: 2019-10-20 13:38:55
 ---
-
-
+DelayQueue是一个支持延时获取元素的无界阻塞队列。并且队列中的元素必须实现Delayed接口。在创建元素时可以指定多久才能从队列中获取当前元素。只有在延迟期满时才能从队列中获取到元素。DelayQueue的应用范围非常广阔，如可以用它来保存缓存中元素的有效期，也可用它来实现定时任务。
 
 DelayQueue是一个支持延时获取元素的无界阻塞队列。并且队列中的元素必须实现Delayed接口。在创建元素时可以指定多久才能从队列中获取当前元素。只有在延迟期满时才能从队列中获取到元素。DelayQueue的应用范围非常广阔，如可以用它来保存缓存中元素的有效期，也可用它来实现定时任务。
 
@@ -78,12 +77,12 @@ public boolean addAll(Collection < ? extends E > c) {
 
 #### DelayQueue 入列操作
 
-DelayQueue提供了4中入列操作，分别是：
+DelayQueue提供了4种入列操作，分别是：
 
-* `add(E e):`阻塞的将制定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
-* `offer(E e):`阻塞的将制定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
-* `put(E e):`阻塞的将制定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
-* `offer(E e, long timeout, TimeUnit unit):`阻塞的将制定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
+* `add(E e):`阻塞的将指定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
+* `offer(E e):`阻塞的将指定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
+* `put(E e):`阻塞的将指定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
+* `offer(E e, long timeout, TimeUnit unit):`阻塞的将指定元素添加到延时队列中去，因为队列是无界的因此此方法永不阻塞。
 
 这里大家可能会奇怪，为什么这些入列方法的解释都是一样的？这个问题先等下回答，我们先来看看这几个入列方法的源码定义：
 
@@ -121,15 +120,15 @@ public boolean offer(E e, long timeout, TimeUnit unit) {
 }
 ```
 
-这里我们从源码中可以看到，`add(E e)`方法、`put(E e)`方法和`offer(E e,long timeout,TimeUnit unit)`方法都是调用`offer(E e)`方法来实现的，这也是为什么这几个方法的解释都是一样的原因。其中`offer(E e)`方法的核心又是调用了PriorityQueue中的`offer(E e)`方法，PriorityQueue和PriorityBlockingQueue都是以二叉堆的无界队列，只不过PriorityQueue不是阻塞的而PriorityBlockingQueue是阻塞的。前面分析过PriorityBlockingQueue的源码，这里就不在重复赘述了。有兴趣的同学可以去看LZ的[《JUC阻塞队列之PriorityBlockingQueue》]()这篇文章。
+这里我们从源码中可以看到，`add(E e)`方法、`put(E e)`方法和`offer(E e,long timeout,TimeUnit unit)`方法都是调用`offer(E e)`方法来实现的，这也是为什么这几个方法的解释都是一样的原因。其中`offer(E e)`方法的核心又是调用了PriorityQueue中的`offer(E e)`方法，PriorityQueue和PriorityBlockingQueue都是以二叉堆的无界队列，只不过PriorityQueue不是阻塞的而PriorityBlockingQueue是阻塞的。前面分析过PriorityBlockingQueue的源码，这里就不在重复赘述了。
 
 #### DelayQueue出列操作
 
-DelayQueue提供了3中出列操作方法，它们分别是：
+DelayQueue提供了3种出列操作方法，它们分别是：
 
-* `poll():`检索并删除此队列的开头，如果此队列没有延迟延迟的元素，则返回null
+* `poll():`检索并删除此队列的开头，如果此队列没有延迟的元素，则返回null
 * `take():`检索并除去此队列的头，如有必要，请等待直到该队列上具有过期延迟的元素可用。
-* `poll(long timeout, TimeUnit unit):`检索并删除此队列的头，如有必要，请等待*直到该队列上具有过期延迟的元素可用，或者*或指定的等待时间到期。
+* `poll(long timeout, TimeUnit unit):`检索并删除此队列的头，如有必要，请等待直到该队列上具有过期延迟的元素可用，或者或指定的等待时间到期。
 
 下面我们来一个一个分析出列操作的原来。
 
@@ -146,7 +145,7 @@ poll操作的源码定义如下：
      try {
         //获取队列中的第一个元素
          E first = q.peek();
-         //若果元素为null,或者头元素还未过期，则返回false
+         //如果元素为null,或者头元素还未过期，则返回false
          if (first == null || first.getDelay(NANOSECONDS) > 0)
              return null;
          else
@@ -180,17 +179,17 @@ public E take() throws InterruptedException {
             else {
             	// 获取first元素剩余的延时时间
                 long delay = first.getDelay(NANOSECONDS);
-                //若果剩余延时时间<=0 表示元素已经过期，可以从队列中获取元素
+                //如果剩余延时时间<=0 表示元素已经过期，可以从队列中获取元素
                 if (delay <= 0)
                 	//直接返回头部元素
                     return q.poll();
-                //若果剩余延时时间>0，表示元素还未过期，则将first置为null,防止内存溢出
+                //如果剩余延时时间>0，表示元素还未过期，则将first置为null,防止内存溢出
                 first = null; // don't retain ref while waiting
                 //如果leader不为null，则直接进入等待队列中等待
                 if (leader != null)
                     available.await();
                 else {
-                	//若果leader为null,则把当前线程赋值给leader，并超时等待delay纳秒
+                	//如果leader为null,则把当前线程赋值给leader，并超时等待delay纳秒
                     Thread thisThread = Thread.currentThread();
                     leader = thisThread;
                     try {
@@ -211,7 +210,7 @@ public E take() throws InterruptedException {
 }
 ```
 
-`take`操作比`poll`操作稍微要复杂些，但是逻辑还是相对比较简单。只是在获取元素的时候先检查元素的剩余延时时间，如果剩余延时时间<=0,则直接返回队列头元素。如果剩余延时时间>0，则判断leader是否为null，若果leader不为null，则表示已经有线程在等待获取队列的头部元素，因此直接进入等待队列中等待。若果leader为null，则表示这是第一个获取头部元素的线程，把当前线程赋值给leader，然后超时等待剩余延时时间。在`take`操作中需要注意的一点是`fist=null`，因为如果first不置为null的话会引起内存溢出的异常，这是因为在并发的时候，每个线程都会持有一份first，因此first不会被释放，若果线程数过多，就会导致内存溢出的异常。
+`take`操作比`poll`操作稍微要复杂些，但是逻辑还是相对比较简单。只是在获取元素的时候先检查元素的剩余延时时间，如果剩余延时时间<=0,则直接返回队列头元素。如果剩余延时时间>0，则判断leader是否为null，如果leader不为null，则表示已经有线程在等待获取队列的头部元素，因此直接进入等待队列中等待。如果leader为null，则表示这是第一个获取头部元素的线程，把当前线程赋值给leader，然后超时等待剩余延时时间。在`take`操作中需要注意的一点是`fist=null`，因为如果first不置为null的话会引起内存溢出的异常，这是因为在并发的时候，每个线程都会持有一份first，因此first不会被释放，如果线程数过多，就会导致内存溢出的异常。
 
 ##### poll(long timeout, TimeUnit unit)
 
@@ -264,5 +263,5 @@ public E poll(long timeout, TimeUnit unit) throws InterruptedException {
 
 ### 总结
 
-DelayQueue的入列和出列操作逻辑相对比较简单，就是在获取元素的时候，判断元素是否已经过期，若果过期就可以直接获取，没有过期的话`poll	`操作是直接返回null，`take`操作是进入等待队列中等待。
+DelayQueue的入列和出列操作逻辑相对比较简单，就是在获取元素的时候，判断元素是否已经过期，如果过期就可以直接获取，没有过期的话`poll	`操作是直接返回null，`take`操作是进入等待队列中等待。
 
