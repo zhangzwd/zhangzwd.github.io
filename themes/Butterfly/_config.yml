@@ -7,6 +7,7 @@
 menu:
   首页: / || fa fa-home
   Java并发: /juc/ || fa fa-lock
+  Spring IOC专题: /spring-ioc/ || fa fa-eercast
   设计模式: /dp/ || fa fa-ge
   Mybatis教程||fa fa-meetup:
     - Mybatis基础教程 || /mybatis3/ || fa fa-anchor
