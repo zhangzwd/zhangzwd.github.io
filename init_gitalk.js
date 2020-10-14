@@ -58,8 +58,6 @@ console.log("开始初始化评论...");
             return result ? false : true;
         });
         if (notInitIssueLinks.length > 0) {
-            console.log(`本次有${notInitIssueLinks.length}个链接需要初始化issue：`);
-            console.log(notInitIssueLinks);
             console.log("开始提交初始化请求, 大约需要40秒...");
             /**
              * 部署好网站后，直接执行start，新增文章并不会生成评论
@@ -70,8 +68,6 @@ console.log("开始初始化评论...");
                     let html = await send({...requestGetOpt, url: item});
                     let title = cheerio.load(html)("title").text();
                     let pathLabel = url.parse(item).path;
-                    // let body = `${item}<br><br>${websiteConfig.description}`;
-                    // let form = JSON.stringify({ body, labels: [config.kind, pathLabel], title });
                     let label = crypto.createHash('md5').update(pathLabel, 'utf-8').digest('hex');
                     let form = JSON.stringify({labels: [config.kind, label], title});
                     //初始化issius
