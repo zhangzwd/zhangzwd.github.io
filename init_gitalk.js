@@ -23,16 +23,12 @@ let requestGetOpt = {
     json: true,
     headers: {
         "User-Agent": "github-user",
-        "access_token": `${config.token}`
+        "Authorization": `token ${config.token}`
     }
 };
 let requestPostOpt = {
     ...requestGetOpt,
     url: issuesUrl,
-    headers: {
-        "User-Agent": "github-user",
-        "access_token": `${config.token}`
-    },
     method: "POST",
     form: ""
 };
@@ -41,7 +37,6 @@ console.log("开始初始化评论...");
     console.log("开始检索链接，请稍等...");
     try {
         let urls = sitemapXmlReader(config.sitemapUrl);
-        // let directory = ['/project/', '/tutorial/'];
         let directory = ['/project/'];
         //筛选需初始化的链接，如不需筛选，下面这句可注释
         // urls =inArray(urls, directory);
