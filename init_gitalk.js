@@ -17,7 +17,8 @@ const config = {
     sitemapUrl: path.resolve(__dirname, "./public/sitemap.xml"),
     kind: "Gitalk", // "Gitalk" or "Gitment"
 };
-let issuesUrl = `https://api.github.com/repos/${config.username}/${config.repo}/issues`;
+// let issuesUrl = `https://api.github.com/repos/${config.username}/${config.repo}/issues`;
+let issuesUrl = `https://api.github.com/repositories/249372070/issues`
 let requestGetOpt = {
     url: `${issuesUrl}&page=1&per_page=1000`,
     json: true,
