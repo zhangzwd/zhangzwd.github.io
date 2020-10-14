@@ -17,14 +17,15 @@ const config = {
     sitemapUrl: path.resolve(__dirname, "./public/sitemap.xml"),
     kind: "Gitalk", // "Gitalk" or "Gitment"
 };
-// let issuesUrl = `https://api.github.com/repos/${config.username}/${config.repo}/issues`;
-let issuesUrl = `https://api.github.com/repositories/249372070/issues`
+let issuesUrl = `https://api.github.com/repos/${config.username}/${config.repo}/issues`;
 let requestGetOpt = {
-    url: `${issuesUrl}&page=1&per_page=1000`,
+    url: `${issuesUrl}?page=1&per_page=1000`,
     json: true,
     headers: {
         "User-Agent": "github-user",
-        "Authorization": `token ${config.token}`
+        "Authorization": `token ${config.token}`,
+        "Content-Type":"application/json",
+        "Accept":"application/vnd.github.v3+json"
     }
 };
 let requestPostOpt = {
@@ -44,7 +45,6 @@ console.log("开始初始化评论...");
         console.log(`共检索到${urls.length}个链接`);
         console.log("开始获取已经初始化的issues:");
         let issues = await send(requestGetOpt);
-        console.log(issues);
 
         let notInitIssueLinks = urls.filter((link) => {
             let result = issues.find(item => {
