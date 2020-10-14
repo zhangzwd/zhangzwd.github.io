@@ -29,6 +29,10 @@ let requestGetOpt = {
 let requestPostOpt = {
     ...requestGetOpt,
     url: issuesUrl,
+    headers: {
+        "User-Agent": "github-user",
+        "access_token": `${config.token}`
+    },
     method: "POST",
     form: ""
 };
