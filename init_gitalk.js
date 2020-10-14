@@ -17,12 +17,13 @@ const config = {
     sitemapUrl: path.resolve(__dirname, "./public/sitemap.xml"),
     kind: "Gitalk", // "Gitalk" or "Gitment"
 };
-let issuesUrl = `https://api.github.com/repos/${config.username}/${config.repo}/issues?access_token=${config.token}`;
+let issuesUrl = `https://api.github.com/repos/${config.username}/${config.repo}/issues`;
 let requestGetOpt = {
     url: `${issuesUrl}&page=1&per_page=1000`,
     json: true,
     headers: {
-        "User-Agent": "github-user"
+        "User-Agent": "github-user",
+        "access_token": `${config.token}`
     }
 };
 let requestPostOpt = {
@@ -54,7 +55,7 @@ console.log("开始初始化评论...");
                 let articleURLMD5 = crypto.createHash('md5').update(url.parse(link).path, 'utf-8').digest('hex');
                 return pathMD5.includes(articleURLMD5);
             });
-            return result?false:true;
+            return result ? false : true;
         });
         if (notInitIssueLinks.length > 0) {
             console.log(`本次有${notInitIssueLinks.length}个链接需要初始化issue：`);
@@ -74,7 +75,7 @@ console.log("开始初始化评论...");
                     let label = crypto.createHash('md5').update(pathLabel, 'utf-8').digest('hex');
                     let form = JSON.stringify({labels: [config.kind, label], title});
                     //初始化issius
-                    return await send({ ...requestPostOpt, form });
+                    return await send({...requestPostOpt, form});
                 });
                 console.log(`已完成${initRet.length}个！`);
                 console.log("可以愉快的发表评论了！");
