@@ -47,4 +47,4 @@ branches:
 env:
   global:
   - GH_REF: github.com/zhangzwd/zhangzwd.github.io.git
-  - CODING_REF: e.coding.net:zzwzdx/blog/blog.git
+  - CODING_REF: zzwzdx.coding.net/p/blog/d/blog/git
