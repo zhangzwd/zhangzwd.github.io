@@ -31,7 +31,7 @@ date: 2019-09-25 13:33:38
 
 下图就是一颗典型的红黑树
 
-![红黑树结构](http://cdn.zzwzdx.cn/blog/红黑树结构.png&blog)
+![红黑树结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树结构.png)
 
 ## 红黑树的旋转
 
@@ -45,7 +45,7 @@ date: 2019-09-25 13:33:38
 
 下图即为左旋操作：
 
-![红黑树左旋](http://cdn.zzwzdx.cn/blog/红黑树左旋.jpg&blog)
+![红黑树左旋](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树左旋.jpg)
 
 左旋的伪代码《算法导论》：参考上面的示意图和下面的伪代码，理解“红黑树T的节点x进行左旋”是如何进行的。
 
@@ -72,7 +72,7 @@ LEFT-ROTATE(T, x)
 
 右旋示意图如下：
 
-![红黑树右旋](http://cdn.zzwzdx.cn/blog/红黑树右旋.jpg&blog)
+![红黑树右旋](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树右旋.jpg)
 
 右旋的伪代码《算法导论》：参考上面的示意图和下面的伪代码，理解“红黑树T的节点y进行右旋”是如何进行的。 
 
@@ -216,7 +216,7 @@ RIGHT-ROTATE(T, y)
 
 从红黑树性质4可以，祖父结点肯定为黑结点，因为不可以同时存在两个相连的红结点。那么此时该插入子树的红黑层数的情况是：黑红红。显然最简单的处理方式是把其改为：红黑红。如下图所示：
 
-![红黑树插入情景4.1](http://cdn.zzwzdx.cn/blog/红黑树插入情景4.1.png&blog)
+![红黑树插入情景4.1](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树插入情景4.1.png)
 
 从上图可以看到，处理的策略是：
 
@@ -244,7 +244,7 @@ RIGHT-ROTATE(T, y)
 
 具体处理如下图所示：
 
-![红黑树插入情景4.2.1](http://cdn.zzwzdx.cn/blog/红黑树插入情景4.2.1.png&blog)
+![红黑树插入情景4.2.1](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树插入情景4.2.1.png)
 
 #####  插入情景4.2.2：插入结点是其父结点的右子结点
 
@@ -256,7 +256,7 @@ RIGHT-ROTATE(T, y)
 - 把P设置为插入结点，得到情景4.2.1
 - 进行情景4.2.1的处理
 
-![红黑树插入情景4.2.2](http://cdn.zzwzdx.cn/blog/红黑树插入情景4.2.2.png&blog)
+![红黑树插入情景4.2.2](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树插入情景4.2.2.png)
 
 ####  插入情景4.3：叔叔结点不存在或为黑结点，并且插入结点的父亲结点是祖父结点的右子
 
@@ -269,7 +269,7 @@ RIGHT-ROTATE(T, y)
 - 将PP设为红色
 - 对PP进行左旋
 
-![红黑树插入情景4.3.1](http://cdn.zzwzdx.cn/blog/红黑树插入情景4.3.1.png&blog)
+![红黑树插入情景4.3.1](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树插入情景4.3.1.png)
 
 #####  插入情景4.3.2：插入结点是其父结点的左子结点
 
@@ -279,7 +279,7 @@ RIGHT-ROTATE(T, y)
 * 把P设置为插入节点，得到情景4.3.1
 * 进行4.3.1的处理
 
-![红黑树插入情景4.3.2](http://cdn.zzwzdx.cn/blog/红黑树插入情景4.3.2.png&blog)
+![红黑树插入情景4.3.2](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树插入情景4.3.2.png)
 
 到这里红黑树插入的所有情景都分析完成了，后面分析红黑树的删除操作。
 
@@ -291,11 +291,11 @@ RIGHT-ROTATE(T, y)
 
 1. X节点为红色节点，那么X的父节点和儿子节点一定是黑色的。所以我们可以简单的用它的黑色儿子节点替换它，并不会破话性质3和性质4。通过被删除节点的所有路径只是少了一个红色节点，这样可以继续保证性质5。如下所示：
 
-    ![红黑树删除情景1](http://cdn.zzwzdx.cn/blog/红黑树删除情景一.png&blog)
+    ![红黑树删除情景1](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树删除情景一.png)
 
 2. X节点是黑色节点，N节点为红色节点，这种情况用它的红色儿子顶替上来的话，会破坏性质5，但是如果我们重绘它的儿子为黑色，则曾经通过它的所有路径将通过它的黑色儿子，这样可以继续保持性质5。如下图所示：
 
-    ![1564646164370](http://cdn.zzwzdx.cn/blog/红黑树删除情景二.png&blog)
+    ![1564646164370](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树删除情景二.png)
 
 3. X节点是黑色节点，N节点也是黑色节点，这种情况比较复杂。（这种情况下该结点的两个儿子都是叶子结点，否则若其中一个儿子是黑色非叶子结点，另一个儿子是叶子结点，那么从该结点通过非叶子结点儿子的路径上的黑色结点数最小为2，而从该结点到另一个叶子结点儿子的路径上的黑色结点数为1，违反了性质5）。我们首先把要删除的节点X替换为它的儿子N。N 沿用 X 对于长辈和晚辈的称呼，需要清楚这里实际删除的是 X 结点，并且删除之后通过 N 的路径长度减 1。这种情景下删除分为一下集中情况：
 
@@ -305,19 +305,19 @@ RIGHT-ROTATE(T, y)
 
     2. S是红色节点，其它为黑色节点。（**这种情况下为什么要做处理，是因为再删除前树是一颗红黑树，但是在删除了X后，那么红黑树就遭到了破坏**）。这种情况下我们是对N的父节点进行左旋操作，把红色兄弟转换成N的祖父，我们接着对调N的父亲和祖父的颜色。。完成这两个操作后，尽管所有路径上黑色节点的数目没有改变，但现在N有了一个黑色的兄弟和一个红色的父亲（它的新兄弟是黑色因为它是红色S的一个儿子），所以我们可以接下去按**情形4**、**情形5**或**情形6**来处理。如下图所示：
 
-        ![1564648858107](http://cdn.zzwzdx.cn/blog/红黑树删除情景3.2.png&blog)
+        ![1564648858107](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树删除情景3.2.png)
 
     3.  N的父亲、S和S的儿子都是黑色的。在这种情形下，我们简单的重绘S为红色。结果是通过S的所有路径，它们就是以前*不*通过N的那些路径，都少了一个黑色节点。因为删除N的初始的父亲使通过N的所有路径少了一个黑色节点，这使事情都平衡了起来。但是，**通过P的所有路径现在比不通过P的路径少了一个黑色节点，所以仍然违反性质5(P可能是一颗子树)。**要修正这个问题，我们要从**情形1**开始，在P上做重新平衡处理。
 
-        ![1564649405273](http://cdn.zzwzdx.cn/blog/红黑树删除情景3.3.png&blog)
+        ![1564649405273](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树删除情景3.3.png)
 
     4. N 的父节点是红色，S 和 S 孩子为黑色。这种情况比较简单，我们只需交换 P 和 S 颜色即可。这样所有通过 N 的路径上增加了一个黑色节点，所有通过 S 的节点的路径必然也通过 P 节点，由于 P 与 S 只是互换颜色，并不影响这些路径。
     
-    ![1564652315813](http://cdn.zzwzdx.cn/blog/红黑数删除情景3.4.png&blog)
+    ![1564652315813](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑数删除情景3.4.png)
     
     5. S 为黑色，S 的左孩子为红色，右孩子为黑色。N 的父节点颜色可红可黑，且 N 是 P 左孩子。这种情况下对 S 进行右旋操作，并互换 S 和 S<sub>L</sub> 的颜色。此时，所有路径上的黑色数量仍然相等，N 兄弟节点的由 S 变为了 S<sub>L</sub>，而 S<sub>L</sub> 的右孩子变为红色。接下来我们到情况六继续分析。
     
-        ![1564652790772](http://cdn.zzwzdx.cn/blog/红黑树删除情景3.5.png&blog)
+        ![1564652790772](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树删除情景3.5.png)
     
     6. S是黑色，S的右儿子是红色，而N是它父亲的左儿子。在这种情形下我们在N的父亲上做左旋转，这样S成为N的父亲（P）和S的右儿子的父亲。我们接着交换N的父亲和S的颜色，并使S的右儿子为黑色。子树在它的根上的仍是同样的颜色，所以性质3没有被违反。但是，N现在增加了一个黑色祖先：要么N的父亲变成黑色，要么它是黑色而S被增加为一个黑色祖父。所以，通过N的路径都增加了一个黑色节点。
     
@@ -326,7 +326,7 @@ RIGHT-ROTATE(T, y)
         - 它通过N的新兄弟。那么它以前和现在都必定通过S和N的父亲，而它们只是交换了颜色。所以路径保持了同样数目的黑色节点。
         - 它通过N的新叔父，S的右儿子。那么它以前通过S、S的父亲和S的右儿子，但是现在只通过S，它被假定为它以前的父亲的颜色，和S的右儿子，它被从红色改变为黑色。合成效果是这个路径通过了同样数目的黑色节点。
     
-        ![1564653320611](http://cdn.zzwzdx.cn/blog/红黑树删除情景3.6.png&blog)
+        ![1564653320611](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/红黑树删除情景3.6.png)
 
 ### concurrentHashMap中红黑树插入
 
@@ -554,7 +554,7 @@ static <K,V> TreeNode<K,V> balanceInsertion(TreeNode<K,V> root,TreeNode<K,V> x) 
 
 第一步：在插入节点5时，发现根节点为空，因此直接将节点5作为根节点
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal第一步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal第一步.png)
 
 第二步：在插入节点3时，发现节点3的hash值小于根节点的hash值，因此将节点插入到根节点的左侧，并将节点3的颜色调整为红色。其部逻辑和结构如下：
 
@@ -584,7 +584,7 @@ if ((p = (dir <= 0) ? p.left : p.right) == null) {
 }
 ```
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal第二步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal第二步.png)
 
 第三步：插入节点4，此时发现节点4的hash值小于根节点的hash值，但是发现根节点的左子节点3不为null,则继续比较节点4的hash值和节点3的hash值，发现节点4的hash值大于节点3的hash值，因此节点4插入到节点3的右侧。进行平衡处理时，现将插入节点4的颜色更新为红色，此时插入节点3和父节点4的颜色相同，产生冲突，想左旋然后变换父节点和祖父节点的颜色，最后右旋，源码片段如下：
 
@@ -606,27 +606,27 @@ if (xp != null) {
 
 
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal 第三步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal 第三步.png)
 
 第四步：插入节点9，此时节点9的hash值大于根节点4的hash值，因此在和根节点4的右子节点5进行比较，发现hash值大于节点5的hash值，且节点5没有右子节点，因此将节点9放入到节点5的右子节点上。演变过程如下：
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal 第四步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal 第四步.png)
 
 第五步：插入节点12，根据上面的规则，我们知道节点12插入到节点9的右子节点上，其演变过程如下：
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal 第五步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal 第五步.png)
 
 第六步：插入节点10，根据规则，我们知道节点10会插入到节点12的左子节点处，其演变过程如下：
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal 第六步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal 第六步.png)
 
 第七步：插入节点11，其演变过程如下：
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal 第七步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal 第七步.png)
 
 第八步：插入节点1，其演变过程如下：
 
-![](http://cdn.zzwzdx.cn/blog/putTreeVal 第八步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/putTreeVal 第八步.png)
 
 到此，ConcurrentHashMap中关于红黑树插入的操作分析完毕，并且也使用了一个示例来完整的演示了put操作，从上面的分析我们看到红黑树的put操作还是非常麻烦的，但是只要我们熟记了其插入的情景后，分析问题也会变得简单。
 
@@ -947,19 +947,19 @@ final boolean removeTreeNode(TreeNode<K,V> p) {
 
 第一步：查找到要删除的节点p
 
-![](http://cdn.zzwzdx.cn/blog/remove 第一步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/remove 第一步.png)
 
 第二步：删除节点p下面有2个孩子节点，找到替代节点s,  并将pr的左孩子节点设置为p, 并将s的右孩子节点设置为删除节点p的右孩子节点,其演变结果如下：
 
-![](http://cdn.zzwzdx.cn/blog/remove 第二步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/remove 第二步.png)
 
 第三步：将p节点的左自己的设置为null,然后将s的左子节点设置为pl,将pp的右子节点设置为s
 
-![](http://cdn.zzwzdx.cn/blog/remove 第三步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/remove 第三步.png)
 
 第四步：自平衡后将p的父节点的左子节点设置为null
 
-![](http://cdn.zzwzdx.cn/blog/remove 第四步.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/remove 第四步.png)
 
 到这里，我们看到删除节点p已经完成了。这里只讨论了删除的一种情况，删除还有其它的2中情况是比较简单的这里LZ就不在分析了，大家可以参照LZ的分析自己分析删除节点p只有一个孩子的情况。
 

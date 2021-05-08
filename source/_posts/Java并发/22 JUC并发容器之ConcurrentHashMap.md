@@ -151,7 +151,7 @@ date: 2019-09-22 08:43:33
 
 在了解了这些重要的概念后，我们先来看看ConcurrentHashMap的数据结构，然后再来分析ConcurrentHashMap的初始化。ConcurrentHashMap的数据结构的数据结构如下图所示
 
-![ConcurrentHashMap的数据结构](http://cdn.zzwzdx.cn/blog/ConcurrentHashMap数据结构.jpg&blog)
+![ConcurrentHashMap的数据结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/ConcurrentHashMap数据结构.jpg)
 
 
 ### 构造函数

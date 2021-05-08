@@ -19,7 +19,7 @@ Semaphore（信号量）是用来控制同时访问特定资源线程数量的�
 
 semaphore结构如下：
 
-![semaphore结构](http://cdn.zzwzdx.cn/blog/semaphore结构图.png&blog)
+![semaphore结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/semaphore结构图.png)
 
 从上图我们可以看出，Semaphore包含了公平锁(FairSync)和非公平锁(NonfairSync)，而这两个内部类又都继承自内部类Sync，Sync又继承AQS(AbstractQueuedSynchronizer)。
 

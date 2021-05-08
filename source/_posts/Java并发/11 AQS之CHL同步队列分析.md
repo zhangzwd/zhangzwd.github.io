@@ -122,7 +122,7 @@ static final class Node {
 ```
 
 节点（Node）是构成CHL的基础，同步器拥有首节点（head）和尾节点（tail）,没有成功获取同步状态的线程会构建成一个节点并加入到同步器的尾部。CHL的基本结构如下：
-![CHL基本结构](http://cdn.zzwzdx.cn/blog/CHL基本结构.png&blog)
+![CHL基本结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/CHL基本结构.png)
 
 图中：**compareAndSetTail(Node expect,Node update)** 方法是同步器为了保证线程安全的加入到CHL的尾部提供的一个基于CAS算法的方法。
 
@@ -184,9 +184,9 @@ private Node enq(final Node node) {
 
 CHL入列的过程如下：
 
-![CHL入列的过程](http://cdn.zzwzdx.cn/blog/CHL入列的过程.png&blog)
+![CHL入列的过程](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/CHL入列的过程.png)
 
 
 ### 出列
 同步队列遵循FIFO规范，首节点的线程在释放同步状态后，将会唤醒后继节点的线程，并且后继节点的线程在获取到同步状态后将会将自己设置为首节点。因为设置首节点是通过获取同步状态成功的线程来完成的，因此设置头结点的方法并不需要使用CAS来保证，因为只有一个线程能获取到同步状态。CHL出列的过程如下：
-![CHL出列的过程](http://cdn.zzwzdx.cn/blog/CHL出列的过程.png&blog)
+![CHL出列的过程](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/CHL出列的过程.png)

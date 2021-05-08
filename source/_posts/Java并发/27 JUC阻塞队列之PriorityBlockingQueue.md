@@ -283,18 +283,18 @@ private static < T > void siftUpUsingComparator(int k, T x, Object[] array,
 
 入列流程如下，假设此时队列中的元素为[5,6,7,8,9,10]，那么对于最新二叉堆的结构如下所示：
 
-![](http://cdn.zzwzdx.cn/blog/最小二叉堆.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/最小二叉堆.png)
 
 如果此时需要向队列中插入元素4时，即x=4，k=6。此时节点x先和k的父节点的值进行比较大小，当`x>=k的父节点的值`时，将x放入到k的位置，即array[k] = x;在最小二叉堆中即表现为节点7的右孩子为x。当`x<k的父节点的值`时，则将K的父节点的值放入到k的位置，如下所示：
 
-![](http://cdn.zzwzdx.cn/blog/入列操作2.png&blog) 
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/入列操作2.png) 
 
 上述操作完成后，k=2，x=4。x继续和k的父节点比价，即x和5进行比价，发现x<5,则将5放置到k的位置。如下图所示：
 
-![](http://cdn.zzwzdx.cn/blog/入列操作3.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/入列操作3.png)
 上述操作完成后，k=0,x=4。则直接将x放置到k的位置。如下所示:
 
-![](http://cdn.zzwzdx.cn/blog/入列操作4.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/入列操作4.png)
 此时队列中数据在数组中的展示顺序为[4,6,5,8,9,10,7]
 
 ### 出列操作
@@ -451,15 +451,15 @@ private static < T > void siftDownUsingComparator(int k, T x, Object[] array, in
 
 `siftDownUsingComparator`方法和`siftDownComparable`方法的逻辑一样，唯一的区别就是比较器的不同。下沉操作的目的是为了保持二叉堆，那我们看看它是如何维护的？我们还以以上面插入操作的数据为例。在上面插入操作完成后，队列中数组为：[4,6,5,8,9,10,7]。二叉堆的表现如下：
 
-![](http://cdn.zzwzdx.cn/blog/入列操作4.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/入列操作4.png)
 
 此时，我们第一次做出列操作，返回的元素是4，然后队列做下沉操作。此时，k=0;x=7,arrar=[4,6,5,8,9,10],n=6,那么half=3。k<half成立，进入while，那么child = 2k+1 = 1,c=array[child] = 6,right = child+1 = 2。此时条件`right < n &&    ((Comparable<? super T>) c).compareTo((T) array[right]) > 0`成立，则c=array[child=right]=5。然后array[k]=c,即array[0]=5。此时二叉堆如下： 
 
-![](http://cdn.zzwzdx.cn/blog/出列操作1.1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出列操作1.1.png)
 
 执行完第一遍后,k=2。继续while循环。此时child = 2k+1 = 5,c=array[child]=10,right=child+1 = 6。此时条件`right < n && ((Comparable<? super T>) c).compareTo((T) array[right]) > 0`不成立，而条件`key.compareTo((T) c) <= 0`成立，跳出while循环，然后把key赋值到k位置，即array[2]=7。
 
-![](http://cdn.zzwzdx.cn/blog/出列操作1.2.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出列操作1.2.png)
 
 我们看到，在第一次出来操作后，经过下沉操作，任然维持二叉堆不变呢。
 

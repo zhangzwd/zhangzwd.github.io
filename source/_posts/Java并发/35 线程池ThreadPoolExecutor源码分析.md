@@ -27,7 +27,7 @@ show_title: thread-pool
 
 我们在创建线程池后，线程池是如何来执行任务的呢？下面我们就来看看线程池的主要处理流程。
 
-![线程池处理流程](http://cdn.zzwzdx.cn/blog/image-20200326221736249.png&blog)
+![线程池处理流程](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200326221736249.png)
 
 从上面的图我们可以看到ThreadPoolExecutor提供了2种方式提交任务，这个2种方法提交任务的区别，我们后面会说到。当提交一个新任务到线程池时，其处理流程如下：
 
@@ -43,7 +43,7 @@ show_title: thread-pool
 
 在研究源码之前，我们先大体的认识下ThreadPoolExecutor的整个架构。
 
-![ThreadPoolExecutor类图](http://cdn.zzwzdx.cn/blog/ThreadPoolExecutor类图.png&blog)
+![ThreadPoolExecutor类图](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/ThreadPoolExecutor类图.png)
 
 上面是ThreadPoolExecutor的UML类图，上面类中的方法和属性并没有完全列出来，只是将主要的属性和方法列出。
 

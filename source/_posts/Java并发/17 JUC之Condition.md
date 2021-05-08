@@ -16,11 +16,11 @@ date: 2019-09-09 13:45:31
 
 Condition接口定义了类似Object的监视器方法，它与Lock配合能够实现等待/通知模式，我们知道Object类中的wait()和notify()方法与synchronized关键字配合也能实现等待/通知模式,但是这两者在使用方式和功能上是有差别的，下面是Condition和Object监视方法的对比：
 
-![Condition接口与Object监视器方法比对](http://cdn.zzwzdx.cn/blog/Condition接口与Object监视器方法比对.png&blog)
+![Condition接口与Object监视器方法比对](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/Condition接口与Object监视器方法比对.png)
 
 Condition接口提供的方法列表如下：
 
-![Condition接口方法](http://cdn.zzwzdx.cn/blog/Condition接口方法.png&blog)
+![Condition接口方法](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/Condition接口方法.png)
 
 Condition的实例必须通过Lock.newCondition()方法来获取，下面通过一个简单的示例来看一下Condition的使用方式。
 
@@ -109,7 +109,7 @@ public class ConditionObject implements Condition, java.io.Serializable {
 
 从上面代码中，我们可以看到Condition中包含了一个首节点（firstWaiter）和一个尾节点（lastWaiter）。当前线程调用await()方法，当前线程将会构造成节点，并添加到等待队列的尾部。等待队列的基本结构如下图所示：
 
-![等待队列的基本结构](http://cdn.zzwzdx.cn/blog/等待队列的基本结构.png&blog)
+![等待队列的基本结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/等待队列的基本结构.png)
 
 如图所示，Condition拥有首节点的引用，而新增节点只需要将原尾节点的nextWaiter指向它，并更新尾节点即可。Object监视器的模型上，一个对象拥有一个同步队列和一个等待队列，而并发包中的Lock拥有一个同步队列和多个等待队列。
 
@@ -275,5 +275,5 @@ final boolean transferForSignal(Node node) {
 
 最后我们来总结下await()方法和signal()方法的流程，其流程图如下：
 
-![await方法和signal方法的流程](http://cdn.zzwzdx.cn/blog/await方法和signal方法的流程.png&blog)
+![await方法和signal方法的流程](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/await方法和signal方法的流程.png)
 

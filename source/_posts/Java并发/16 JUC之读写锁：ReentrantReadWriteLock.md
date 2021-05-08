@@ -28,7 +28,7 @@ date: 2019-09-08 14:12:11
 
 ### ReentrantReadWriteLock结构
 
-![ReentrantReadWriteLock结构](http://cdn.zzwzdx.cn/blog/ReentrantReadWriteLock结构.png&blog)
+![ReentrantReadWriteLock结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/ReentrantReadWriteLock结构.png)
 
 从上图我们可以大概了解ReentrantReadWriteLock类的内部构成。
 
@@ -41,7 +41,7 @@ date: 2019-09-08 14:12:11
 
 读写锁中`Sync`类是继承于`AQS`，并且主要使用上文介绍的数据结构中的`state`及`waitStatus`变量进行实现。 
 实现读写锁与实现普通互斥锁的主要区别在于需要分别记录读锁状态及写锁状态，并且等待队列中需要区别处理两种加锁操作。 
-`Sync`使用`state`变量同时记录读锁与写锁状态，将`int`类型的`state`变量分为高16位与低16位，高16位记录读锁状态，低16位记录写锁状态，如下图所示：![读写锁状态](http://cdn.zzwzdx.cn/blog/读写锁状态.png&blog)
+`Sync`使用`state`变量同时记录读锁与写锁状态，将`int`类型的`state`变量分为高16位与低16位，高16位记录读锁状态，低16位记录写锁状态，如下图所示：![读写锁状态](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/读写锁状态.png)
 
 ###  ReentrantReadWriteLock源码分析
 
@@ -237,7 +237,7 @@ final int fullTryAcquireShared(Thread current) {
 
 这里我们看到读锁的获取是比较复杂的，这里LZ再用一张图来表明读锁获取的整个流程。
 
-![读锁获取流程](http://cdn.zzwzdx.cn/blog/读锁获取流程.png&blog)
+![读锁获取流程](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/读锁获取流程.png)
 
 
 

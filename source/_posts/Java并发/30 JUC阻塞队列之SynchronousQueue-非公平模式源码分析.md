@@ -188,7 +188,7 @@ if (timed && nanos <= 0) {      // can't wait
 ```
 
 上面代码中为判断timed和nanos, 如果指定了timed并且nanos小于0，则判断栈顶节点不为null并且栈顶节点已经删除，则弹出栈顶节点重新定义栈顶节点，否则返回null。上述条件在当前例子中都不满足，所以要进入到下面这段代码中，首先进行对s进行初始化值，并且进行入栈操作，`casHead(h, s = snode(s, e, h, mode))`，下面看一下栈中的情况如下图所示： 
-![](http://cdn.zzwzdx.cn/blog/put_2_1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/put_2_1.png)
 
 当执行完入栈操作后，接下来会执行`awaitFulfill`操作，我们先来看看该方法源码：
 
@@ -245,7 +245,7 @@ boolean shouldSpin(SNode s) {
 ```
 再回到我们的示例中，在执行完`awaitFulfill`方法后，栈中的情况如下：
 
-![](http://cdn.zzwzdx.cn/blog/put2_2.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/put2_2.png)
 
 在示例中，主线程在Thread_1启动后，睡眠了50秒，因此此时Thread_1线程将进入阻塞状态，即调用`queue.put(1);`方法的线程进入阻塞状态，在过了50秒后，Thread_2线程(即调用`queue.take()`方法的线程)启动，该线程将调用`E e = transferer.transfer(null, false, 0)`,进入`transfer`方法后，任然会新进行mode值的计算，会执行下面代码
 
@@ -281,7 +281,7 @@ else if (!isFulfilling(h.mode)) { // 条件二
 
 进入if语句后，首先判断栈顶节点是否被清除，很明显此时栈顶节点没有被删除，因此执行`casHead(h, s=snode(s, e, h, FULFILLING|mode))`,在执行该语句后，栈中的情况如下：
 
-![](http://cdn.zzwzdx.cn/blog/take_2_1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/take_2_1.png)
 
 继续往后面执行代码，执行完`SNode m = s.next;  `后，从上图中知道，m=Reference-1!=null,继续执行后面代码`SNode mn = m.next`,此时mn=null,然后执行`m.tryMatch(s)`,如果成功，则表示匹配成功，将s节点和m节点从栈中弹出，然后返回。如果匹配不成功，则更新s节点的next,重新循环。在上面执行的代码中核心方法就是`tryMatch`方法，我们来看看该方法的源码。
 

@@ -52,7 +52,7 @@ public class Human {
 
 在这里，提供我们东西的“人”就是IOC，在上面的示例中，IOC就相当于租车公司，你要什么车，只要你把要求告诉给租车公司，它就会提供你什么车，我们只需要关注怎么使用就行了，完全不需要我们再去造一个车出来然后再使用。所以说简单点，IOC的理念就是，让别人为你服务。如下图所示：
 
-![image-20200508220836602](http://cdn.zzwzdx.cn/blog/image-20200508220836602.png&blog)
+![image-20200508220836602](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200508220836602.png)
 
 在没有引入IOC之前，被注入的对象会直接依赖于依赖对象，在使用了IOC后，两者及其他们关系都是通过`IOC Service Provider`来统一维护管理的。被注入的对象需要什么，直接跟 `IOC Service Provider` 打招呼，后者就会把相应的被依赖对象注入到被注入对象中，从而达到 `IOC Service Provider` 为备注入对象提供提供服务的目的。**其实IOC就是这么简单！原来需要什么东西自己去拿，现在是需要什么东西就让别人送过来。**
 
@@ -118,7 +118,7 @@ public class Human {
 
 首先我们来看下我们大名鼎鼎的`applicationContext`的类图。
 
-![ApplicationContext](http://cdn.zzwzdx.cn/blog/ApplicationContext.png&blog)
+![ApplicationContext](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/ApplicationContext.png)
 
 从上面 `applicationContext`的类图中，我们可以看到 `applicationContext` 即继承了顶级接口 `ResourceLoader` 又继承了顶级接口 `BeanFactory`。
 
@@ -168,33 +168,33 @@ public interface ResourceLoader {
 
 ##### Resource类图
 
-![Resource](http://cdn.zzwzdx.cn/blog/Resource.png&blog)
+![Resource](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/Resource.png)
 
 ##### ResourceLoader类图
 
-![ResourceLoader](http://cdn.zzwzdx.cn/blog/ResourceLoader.png&blog)
+![ResourceLoader](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/ResourceLoader.png)
 
 #### BeanFactory体系
 
 `BeanFactory` 是我们Spring IOC 中非常重要的一块，它是用于访问Spring Bean容器的根接口。它为我们Spring IOC 容器提供了最底层的支持。说的简单点，就是BeanFactory的主要功能就是管理我们容器中的Bean。其体系结构如下：
 
-![BeanFactory](http://cdn.zzwzdx.cn/blog/BeanFactory.png&blog)
+![BeanFactory](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/BeanFactory.png)
 
 #### BeanDefinitionReader体系
 
 在上面的Resource系统中，我们提到BeanDefinitionReader将Resource中的类信息加载为BeanDefinition，因此BeanDefinitionReader和BeanDefinition也是我们Spring IOC容器中非常重要的一个体系结构，我们先来看BeanDefinitionReader。BeanDefinitionReader类图如下：
 
-![BeanDefinitionReader](http://cdn.zzwzdx.cn/blog/BeanDefinitionReader.png&blog)
+![BeanDefinitionReader](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/BeanDefinitionReader.png)
 
 可以看到上面的`BeanDefinitionReader`体系都是基于配置的，基于注解的是`AnnotatedBeanDefinitionReader`，它就是一个单独的类，用于处理基于注解的配置。其类图如下：
 
-![AnnotatedBeanDefinitionReader](http://cdn.zzwzdx.cn/blog/AnnotatedBeanDefinitionReader.png&blog)
+![AnnotatedBeanDefinitionReader](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/AnnotatedBeanDefinitionReader.png)
 
 #### BeanDefinition体系
 
 BeanDefinition是Spring用来描述Bean的信息的类，其类图如下：
 
-![BeanDefinition](http://cdn.zzwzdx.cn/blog/BeanDefinition.png&blog)
+![BeanDefinition](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/BeanDefinition.png)
 
 
 

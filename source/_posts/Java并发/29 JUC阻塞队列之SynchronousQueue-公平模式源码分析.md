@@ -442,7 +442,7 @@ TransferQueue() {
 
 初始化后，队列的状态如下：
 
-![初始化](http://cdn.zzwzdx.cn/blog/put_1.png&blog)
+![初始化](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/put_1.png)
 
 
 
@@ -498,11 +498,11 @@ if (h == t || t.isData == isData) {
 
 执行完上面代码后，队列情况如下：
 
- ![](http://cdn.zzwzdx.cn/blog/put_2 .png&blog)
+ ![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/put_2 .png)
 
 此时线程A处于自旋状态，如果自旋次数用完后还没有消费者消费在线程进入阻塞状态。接下来是线程B进行操作，这里不进行重复进行，插入第二个元素队列的状况，此时线程B也处于等待状态。
 
-![](http://cdn.zzwzdx.cn/blog/put_3.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/put_3.png)
 
 上面的主要是put了两次操作后队列的情况，接下来分析一下take操作时又是如何进行操作的，当take操作时，isData为false，而队尾的isData为true两个不相等，所以不会进入到if语句，而是进入到了else语句
 
@@ -534,7 +534,7 @@ else {
 
 首先获取头结点的下一个节点m用于互补操作，也就是take操作,接下来判断读取是否一致，不一致从新读取。然后判断m节点是否被消费，如果没消费，则移动头结点到下一个节点，并重新消费，如果没有消费，则移动头结点到下一个节点，然后将m的item值修改为null,并且唤醒m节点上阻塞的线程。因此在take()操作执行完后，队列情况如下：
 
-![](http://cdn.zzwzdx.cn/blog/take.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/take.png)
 
 这里需要注意的是，在执行`LockSupport.unpark(m.waiter);`代码后，或唤醒put操作的线程，这里会唤醒线程A，唤醒线程A后会在执行如下代码：
 
@@ -682,7 +682,7 @@ public class TestSynchronousQueue {
 
 上面例子说明我们启动了两个线程，分别向SynchronousQueue队列中添加了元素1和元素2，添加成功之后的，让主线程休眠一会，然后将第一个线程进行中断操作，添加两个元素后节点所处在的状态为下图所示：
 
-![](http://cdn.zzwzdx.cn/blog/clean_1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_1.png)
 
 当我们调用`threadA.interrupt();`方法时，线程A的等他消费将会被终止，然后会运行`awaitFulfill`中的代码：
 
@@ -697,7 +697,7 @@ if (x != e)
 
 执行完上面代码后，节点状态如下：
 
-![](http://cdn.zzwzdx.cn/blog/clean_1_1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_1_1.png)
 
 退出`awaitFulfill`并且返回的是s节点内容（实际上返回的就是s节点），接下来返回到调用`awaitFulfill`的方法`transfer`方法中
 
@@ -735,7 +735,7 @@ void advanceHead(QNode h, QNode nh) {
 
 上面`advanceHead`代码比较简单，运行完后，节点状态如下所示：
 
-![](http://cdn.zzwzdx.cn/blog/clean_1_2.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_1_2.png)
 
 从上图我们看到，队列的原头结点从队列中移除了，并且原队列中头结点的下一个元素转变成了新的头结点，至此清除头结点的下一个节点完成。
 
@@ -784,7 +784,7 @@ public class TestSynchronousQueue {
 
 执行完3次put操作后，队列情况如下：
 
-![](http://cdn.zzwzdx.cn/blog/clean_2.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_2.png)
 
 在执行`threadB.interrupt();`后，线程B会从等待中唤醒，然后和情况一相同从`awaitFulfill`方法中返回后进入`clean`方法，代入如下：
 
@@ -808,7 +808,7 @@ if (s != t) {
 
 这里s即线程B所在的节点也就是要清除的节点，很显然`s!=t`成立，进入if语句。然后执行`pred.casNext(s, sn)`将s节点跳过，运行完后，队列情况如下：
 
-![](http://cdn.zzwzdx.cn/blog/clean_2_1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_2_1.png)
 
 #### 情况三
 
@@ -857,15 +857,15 @@ public class TestSynchronousQueue {
 
 该例子主要说明一个问题就是删除的节点如果是末尾节点的话，`clear`方法又是如何处理的，首先启动第一和第二个线程，然后又将第二个线程中断，这是第二个线程插入的节点为尾节点，然后再启动第三个节点插入值，再中断了第三个节点末尾节点，说一下为啥这样操作，因为当清除尾节点时，并不是直接移除当前节点，而是将被清除的节点的前节点设置到QNode的CleanMe中，等待下次clear方法时进行清除上次保存在CleanMe的节点，然后再处理当前被中断节点，将新的被清理的节点prev设置为cleanMe当中，等待下次进行处理，接下来一步一步分析，首先我们先来看一下第二个线程启动后节点的状态。
 
-![](http://cdn.zzwzdx.cn/blog/clean_3.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_3.png)
 
 然后在执行了`threadB.interrupt();`后，状态如下：
 
-![](http://cdn.zzwzdx.cn/blog/clean_3_1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_3_1.png)
 
 然后在线程C执行put操作后，状态如下：
 
-![](http://cdn.zzwzdx.cn/blog/clean_3_2.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_3_2.png)
 
 然后执行`threadC.interrupt();`后此时`QNode dp = cleanMe;`不为空，因此进入执行下面代码：
 
@@ -895,10 +895,10 @@ if (dp != null) { // Try unlinking previous cancelled node
 
 上面逻辑执行完后，队列状态如下：
 
-![](http://cdn.zzwzdx.cn/blog/clean_3_3.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_3_3.png)
 
 可以看出将上一次标记为清除的节点清除了队列中，再次进入循环，循环之后发现dp为null则会运行`casCleanMe(null, pred)`，此时当前节点s的前一个节点已经被清除队列，但是并不影响后续的清除操作，因为前节点的next节点还在维护中，也是前节点的next指向还是`Reference-Thread-C`,如下图所示：
 
-![](http://cdn.zzwzdx.cn/blog/clean_3_4.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/clean_3_4.png)
 
 就此SynchronousQueue的公平模式的数据交换分析完毕，如果有不正确的地方请指正。下一篇将分析SynchronousQueue的非公平模式。

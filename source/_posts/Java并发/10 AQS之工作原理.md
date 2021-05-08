@@ -16,7 +16,7 @@ date: 2019-08-27 21:12:33
 ### AQS之工作原理
 前面一章LZ简单的介绍了下AbstractQueuedSynchronizer（AQS）以及AQS中提供的一些模板方法的功能和作用，这一章LZ将用一个简单的实例来介绍下AQS中独占锁的工作原理。独占锁顾名思义就是在同一时刻只能有一个线程能获取到锁，而其它需要获取这把锁的线程将进入到同步队列中等待获取到了锁的线程释放这把锁，只有获取锁的线程释放了锁，同步队列中的线程才能获取锁。LZ可能描述的有些绕，画图来解释下这段话的意思：
 
-![AQS原理](http://cdn.zzwzdx.cn/blog/AQS原理.png&blog)
+![AQS原理](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/AQS原理.png)
 
 这个图则清晰的说明了AQS中独占锁的的基本原理，下面LZ将用一段简单的代码来看看AQS中独占锁的工作原理。
 ```java

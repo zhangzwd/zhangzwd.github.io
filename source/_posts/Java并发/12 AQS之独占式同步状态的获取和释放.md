@@ -134,7 +134,7 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
 ```
 到此，`acquire(arg)`方法执行完毕，之后我们来看下acquire(arg)方法的整个流程：
 
-![acquire方法的流程](http://cdn.zzwzdx.cn/blog/acquire方法的流程.png&blog)
+![acquire方法的流程](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/acquire方法的流程.png)
 
 ### acquireInterruptibly
 `acquireInterruptibly(int arg)`从命名是可以看出相比于`acquire(ing arg)`方法，该方法是响应中断的。也就是说当线程在CHL中自旋的获取同步状态时，如果线程被中断了，会立刻响应中断并抛出InterruptedException异常。其源码如下：
@@ -234,7 +234,7 @@ private boolean doAcquireNanos(int arg, long nanosTimeout) throws InterruptedExc
 }
 ```
 我们可以看到在`doAcquireNanos(int arg, long nanosTimeout)`方法中，首先判断超时时间是否小于等于0，如果小于等于0则返回false。如果超时时间大于0则计算出截止时间`（final long deadline = System.nanoTime() + nanosTimeout;）`如果当前节点不是头结点获取获取同步状态失败，则需要计算出睡眠时间`（nanosTimeout = deadline - System.nanoTime();）`，如果睡眠时间小于等于0，则返回false，否则如果超时时间大于spinForTimeoutThreshold（1000L），则睡眠nanosTimeout纳秒，否则进入自旋。这里spinForTimeoutThreshold是AQS定义的一个常量，这里为什么要定义一个超时阈值呢？这是因为在线程从睡眠（TIME_WAITINT）状态切换到RUNNING状态会导致上下文的切换，如果超时时间太短，会导致频繁的上下文切换而浪费资源。整个超时控制的流程如下：
-![超时控制的流程](http://cdn.zzwzdx.cn/blog/超时控制的流程.png&blog)
+![超时控制的流程](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/超时控制的流程.png)
 
 ### release
 当前线程在获取到同步状态并且执行完相关逻辑后，需要释放同步状态，并唤醒后继节点获取同步状态。`release(int arg)`方法定义如下：

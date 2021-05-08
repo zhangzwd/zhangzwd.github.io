@@ -154,7 +154,7 @@ private E unlinkFirst() {
 
 LinkedBlockingDeque入列和出列的逻辑都比较简单，只要注意节点的指向就行。LinkedBlockingDeque底层结构如下：
 
-![](http://cdn.zzwzdx.cn/blog/结构.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/结构.png)
 
 ### 总结
 

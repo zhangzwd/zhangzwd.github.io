@@ -19,7 +19,7 @@ ReentrantLock可重入锁，它表示该锁能够支持一个线程对资源的�
 这里提到了一个获取锁的公平性问题，如果在绝对的时间上，先等待的线程一定会优先获取到锁，那么这锁就是公平的，反之就是非公平的。从这里我们可以看出，公平性的锁效率是没有非公平性锁高的，但是为什么会有公平性的锁呢？那是因为公平性的锁能够减少"饥饿"发生的概率，等待越久的请求越是能够得到优先的满足。
 
 ### 2ReentrantLock 结构
-![ReentrantLock结构](http://cdn.zzwzdx.cn/blog/ReentrantLock结构.png&blog)
+![ReentrantLock结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/ReentrantLock结构.png)
 
 从上面的UML图中，我们可以看到ReentrantLock实现了Lock和Serializable接口，含有3个静态内部类，Sync、NonfairSync和FairSync。其中Sync是一个抽象内部类且继承了AbstractQueuedSynchronizer，NonfairSync（非公平锁）和FairSync（公平锁）都继承了Sync这个抽象类。
 

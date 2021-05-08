@@ -19,7 +19,7 @@ CyclicBarrier顾名思义就是可循环使用的屏障。它主要实现的功�
 
 CyclicBarrier结构如下：
 
-![CyclicBarrier结构](http://cdn.zzwzdx.cn/blog/CyclicBarrier结构.png&blog)
+![CyclicBarrier结构](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/CyclicBarrier结构.png)
 
 通过上图我们可以看到，CyclicBarrier是通过ReentrantLock和Condition来实现的。它有两个构造方法，其源码如下：
 

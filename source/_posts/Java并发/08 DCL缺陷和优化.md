@@ -77,7 +77,7 @@ instance = memory; // 3: 设置instance指向刚分配的内存地址
 
 上面3行代码中，2和3可能被重排序，如果2和3被重排序，那么上述DCL代码在多线程中执行的时序如下：
 
-![DCL代码在多线程中执行的时序](http://cdn.zzwzdx.cn/blog/DCL代码在多线程中执行的时序.png&blog)
+![DCL代码在多线程中执行的时序](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/DCL代码在多线程中执行的时序.png)
 
 从上图我们可以看到，当线程A执行到操作3之后，操作2之前时，这时候线程B首次判断instance是否为null,这个时候我们知道instance是不为空的，但是instance却根本不能使用，因为对象还没有被初始化。这就是DCL缺陷的所在。
 
@@ -131,7 +131,7 @@ public class InstanceFactory {
 
 如果这时候有多个线程同时访问getInstance()方法，这是某一个线程会导致InstanceFactoryHolder类的初始化，因此最终只会有一个线程执行new InstanceFactory()，因此无论new InstanceFactory()中是否存在排序，它对其它的线程不可见。其执行流程如下图所示：
 
-![DCL类初始化解决方案](http://cdn.zzwzdx.cn/blog/DCL类初始化解决方案.png&blog)
+![DCL类初始化解决方案](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/DCL类初始化解决方案.png)
 
 ###  类的初始化
 
@@ -160,4 +160,4 @@ Java语言规范规定，对于每个类或者接口C，都有唯一的初始化
 
 结合上述C的初始化过程，我们可以看到InstanceFactory示例的执行时序图如下：
 
-![类初始化时序](http://cdn.zzwzdx.cn/blog/类初始化时序.png&blog)
+![类初始化时序](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/类初始化时序.png)

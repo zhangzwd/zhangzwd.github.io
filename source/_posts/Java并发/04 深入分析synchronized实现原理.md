@@ -108,18 +108,18 @@ Mark Word用于存储对象自身的运行时数据，如哈希码（Hash Code�
 | 无锁状态 | 对象的HashCode | 对象分代年龄 | 0                 | 01           |
 
 在程序运行期间，对象头中锁表标志位会发生改变。Mark Word可能发生的变化如下：
-![Mark_Word_32](http://cdn.zzwzdx.cn/blog/Mark_Word_32.png&blog)
+![Mark_Word_32](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/Mark_Word_32.png)
 
 在64位虚拟机中，Java对象头中Mark Work的长度是64位的,其结构如下：
 
-![Mark_Word_64](http://cdn.zzwzdx.cn/blog/Mark_Word_64.png&blog)
+![Mark_Word_64](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/Mark_Word_64.png)
 
 介绍了Mark Word 下面我们来介绍下一个重要的概念Monitor。
 
 ##### Monitor
 
 Monitor是操作系统提出来的一种高级原语，但其具体的实现模式，不同的编程语言都有可能不一样。Monitor 有一个重要特点那就是，同一个时刻，只有一个线程能进入到Monitor定义的临界区中，这使得Monitor能够达到互斥的效果。但仅仅有互斥的作用是不够的，无法进入Monitor临界区的线程，它们应该被阻塞，并且在必要的时候会被唤醒。显然，monitor 作为一个同步工具，也应该提供这样的机制。Monitor的机制如下图所示：
-![Monitor机制](http://cdn.zzwzdx.cn/blog/Monitor机制.jpg&blog)
+![Monitor机制](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/Monitor机制.jpg)
 
 从上图中，我们来分析下Monitor的机制：
 Mointor可以看做是一个特殊的房间（这个房间就是我们在Java线程中定义的临界区），Monitor在同一时间，保证只能有一个线程进入到这个房间，进入房间即表示持有Monitor，退出房间即表示释放Monitor。
@@ -171,7 +171,7 @@ Mointor可以看做是一个特殊的房间（这个房间就是我们在Java线
 
 #### 偏向锁、轻量级锁的状态转换
 
-![偏向锁轻量级锁的状态转换](http://cdn.zzwzdx.cn/blog/偏向锁轻量级锁的状态转换.png&blog)
+![偏向锁轻量级锁的状态转换](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/偏向锁轻量级锁的状态转换.png)
 
 
 #### 其它优化

@@ -45,7 +45,7 @@ public class VolatileTest implements Runnable {
 
 这段代码的运行结果：
 
-![volatile测试结果](http://cdn.zzwzdx.cn/blog/volatile测试结果.png&blog)
+![volatile测试结果](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/volatile测试结果.png)
 
 可以看到尽管在代码中调用了v.setFlag(false)方法，线程也没有结束运行。这是因为在上面的代码中，实际上是有2个线程在运行，一个是main线程，一个是在main线程中创建的t1线程。因此我们可以看到在线程中的变量是互不可见的。  要理解线程中变量的可见性，我们需要先理解Java的内存模型。
 
@@ -60,7 +60,7 @@ Java内存模型（Java Memory Model 简称 JMM），决定一个一个线程对
 
 Java内存模型的抽象概念图如下所示：
 
-![Java内存模型](http://cdn.zzwzdx.cn/blog/Java内存模型.png&blog)
+![Java内存模型](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/Java内存模型.png)
 
 看完了Java内存模型的概念，我们再来看看内存模型中主内存是如何和线程本地内存之间交互的。
 
@@ -186,13 +186,13 @@ public class VolatileTest3 {
 
 此时有2个线程A和B，线程A先执行write()方法，虽有B执行read()方法，在B线程执行到第4步时，i的结果能正确得到吗？结论是 **不一定**  ，因为步骤1和2没有数据依赖关系，因此编译器和处理器可能对这2个操作进行重排序。同样步骤3和4也没有数据依赖关系，编译器和处理器也可以对这个2个操作进行重排序，我们来看看这两种重排序带来的效果：
 
-![线程重排序](http://cdn.zzwzdx.cn/blog/线程重排序.png&blog)
+![线程重排序](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/线程重排序.png)
 
 从上面图片，这2组重排序都会破坏多线程的运行结果。了解了重排序的概念和知道了重排序对多线程的影响后，我们知道了volatile为什么需要禁止重排序，那JMM到底是如何实现volatile禁止重排序的呢？下面我们就来探讨下JMM是如何实现volatile禁止重排序的。
 
 前面提到过，重排序分为编译器重排序和处理器重排序，为了实现volatile内存语义，JMM分别对这两种重排序进行了限制。下图是JMM对编译器重排序指定的volatile规则：
 
-![volatile规则](http://cdn.zzwzdx.cn/blog/volatile规则.png&blog)
+![volatile规则](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/volatile规则.png)
 
 从上面图中我们可以分析出：
 
@@ -235,7 +235,7 @@ public class VolatileTest3 {
 }
 ```
 
-![内存屏障策略分析一](http://cdn.zzwzdx.cn/blog/内存屏障策略分析一.png&blog)
+![内存屏障策略分析一](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/内存屏障策略分析一.png)
 
 通过上面的示例我们分析了volatile指令的内存屏蔽策略，但是这种内存屏障的插入策略是非常保守的，在实际执行时，只要不改变volatile写/读的内存语义，编译器可以根据具体情况来省略不必要的屏障。如下示例：
 
@@ -256,4 +256,4 @@ class VolatileBarrierExample {
 
 上述代码，编译器在生成字节码时，可能做了如下优化
 
-![内存屏障策略分析二](http://cdn.zzwzdx.cn/blog/内存屏障策略分析二.png&blog)
+![内存屏障策略分析二](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/内存屏障策略分析二.png)

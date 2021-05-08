@@ -24,7 +24,7 @@ Windows平台下，需要配置gradle的环境变量。
 
 完成配置后，输入`gradle -v`会显示gradle的版本号，表示gradle安装成功。
 
-![image-20200429221410367](http://cdn.zzwzdx.cn/blog/image-20200429221410367.png&blog)
+![image-20200429221410367](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200429221410367.png)
 
 
 
@@ -36,7 +36,7 @@ Spring源码下载在github上找到spring-projects/*spring*-framework，选择�
 
 进入 `spring-framework` 文件夹下，打开cmd，输入 `gradlew :spring-oxm:compileTestJava` 进行编译。在编译的过程中可能出现错误，重试几次就可以了。
 
-![image-20200430091342847](http://cdn.zzwzdx.cn/blog/image-20200430091342847.png&blog)
+![image-20200430091342847](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200430091342847.png)
 
 ### 导入项目
 
@@ -44,19 +44,19 @@ Spring源码下载在github上找到spring-projects/*spring*-framework，选择�
 
 导入项目完成后，修改gradle和Jdk的配置信息。
 
-![image-20200430101715846](http://cdn.zzwzdx.cn/blog/image-20200430101715846.png&blog)
+![image-20200430101715846](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200430101715846.png)
 
 修改完成后，查看源码中是否包含`spring-aspects`模块，如果存在，则需要将`spring-aspects`排除编译。
 
 File -> Project Structure -> Modules
 
-![image-20200430102139508](http://cdn.zzwzdx.cn/blog/image-20200430102139508.png&blog)
+![image-20200430102139508](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200430102139508.png)
 
 构建项目，等待IDEA工具编译完成。
 
 在构建的过程中可能会出现如下的错误
 
-![image-20200430102604467](http://cdn.zzwzdx.cn/blog/image-20200430102604467.png&blog)
+![image-20200430102604467](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200430102604467.png)
 
 这是因为gradle的版本太高的原因，有2种解决方案，一是将自己本地的gradle的版本减低，二是提高build-scan的版本，这里博主用的是第一种方案。
 
@@ -64,17 +64,17 @@ File -> Project Structure -> Modules
 
 在spring的工程项目中新建测试模块，在工程目录项右键-->New-->Module
 
-![image-20200430112732589](http://cdn.zzwzdx.cn/blog/image-20200430112732589.png&blog)
+![image-20200430112732589](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200430112732589.png)
 
 新建项目完成后，配置build.gradle,在 dependencies 里面添加 compile(project(":spring-context"))  spring-context的依赖。
 
 最后运行测试
 
-![image-20200430115639706](http://cdn.zzwzdx.cn/blog/image-20200430115639706.png&blog)
+![image-20200430115639706](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200430115639706.png)
 
 可以看到正常的输出了打印的信息
 
-![image-20200430115708533](http://cdn.zzwzdx.cn/blog/image-20200430115708533.png&blog)
+![image-20200430115708533](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/image-20200430115708533.png)
 
 此时，spring源码环境即搭建完成。
 

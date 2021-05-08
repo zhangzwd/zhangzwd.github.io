@@ -33,7 +33,7 @@ happens-before规则如下：
 
 以上8条happens-before规则都比较简单，这里LZ只分析第3条volatile变量规则，分析如下：
 
-![happens-before之volatile规则](http://cdn.zzwzdx.cn/blog/happens-before之volatile规则.png&blog)
+![happens-before之volatile规则](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/happens-before之volatile规则.png)
 
 从上图中，我们看到存在4条happens-before关系，它们分别如下：
 

@@ -26,7 +26,7 @@ ConcurrentLinkedQueue规定了如下几个不变性：
 
 通过ConcurrentLinkedQueue的类图我们来分析下它的结构，类图如下：
 
-![](http://cdn.zzwzdx.cn/blog/concurrentLinkedQueue类图.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/concurrentLinkedQueue类图.png)
 
 由上面ConcurrentLinkedQueue的类图，我们可以看出ConcurrentLinkedQueue是由head和tail节点组成，每个节点（Node）又有元素item和指向下一个节点的引用next组成，节点与节点之间就是通过next进行关联的。默认情况下head和tail相等并且都等于空。我们先来看看ConcurrentLinkedQueue的重要组成部分节点的源码定义。
 
@@ -183,7 +183,7 @@ public boolean offer(E e) {
 
 ConcurrentLinkedQueue的入队操作整体逻辑如下图所示：
 
-![](http://cdn.zzwzdx.cn/blog/入列过程.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/入列过程.png)
 
 ### ConcurrentLinkedQueue出队操作
 
@@ -223,33 +223,33 @@ public E poll() {
 
 上面方法主要逻辑就是首先取出队列的头结点，然后判断头结点元素是否为空，如果为空，则表示有另一个线程已经进行了一次出队操作将该节点取走，如果不为空，则使用CAS方法将头结点的item设置成空，如果CAS设置成功，判断p和q是否相等，如果不相等则更新头结点，否则直接返回。如CAS设置失败，则表示出现了并发，需要重新从头结点遍历。下面我们还是来模拟出队列的操作。首先假设队列初始如下：
 
-![](http://cdn.zzwzdx.cn/blog/出队列_0.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出队列_0.png)
 
 **poll 节点A：**
 
 此时p=h=head,而head此时执行的是一个空节点即p.item=null,因此条件①不成立，跳到条件③（(q = p.next) == null），条件③也不成立，最后把执行p = q，然后再次循环。此时各个变量如下图所示：
 
-![](http://cdn.zzwzdx.cn/blog/出队列_1.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出队列_1.png)
 
 此时p指向节点A，因此p.item ！=null ，进行p.casItem(item, null)，如果这个CAS成功，发现p!=h,因此执行updateHead(h, ((q = p.next) != null) ? q : p)，q=p.next此时指向节点B,不为空，则将head CAS更新成节点B，如下所示：
 
-![](http://cdn.zzwzdx.cn/blog/出队列_2.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出队列_2.png)
 
 **poll节点B：**
 
 此时h=head,p=h,因此item = p.item = B,条件①成功，发现条件p=h，因此直接return，结果如下图：
 
-![](http://cdn.zzwzdx.cn/blog/出队列_3.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出队列_3.png)
 
 **poll节点C：**
 
 此时h = head, p = h，item = p.item=null,因此条件①不成立，跳到条件③（(q = p.next) == null，此时p.next=节点C！=null）,条件③不成立，跳到条件④，发现条件④也不成立，因此直接运行p = q;然后再次运行。此时各个变量如下所示：
 
-![](http://cdn.zzwzdx.cn/blog/出队列_4.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出队列_4.png)
 
 此时条件①成立，条件②也成立，因此执行updateHead(h, ((q = p.next) != null) ? q : p);执行后如下图所示：
 
-![](http://cdn.zzwzdx.cn/blog/出队列_5.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/出队列_5.png)
 
 看完上面poll的流程，我们在回去看offer操作中的这段操作，我们就能明白了：
 
@@ -266,7 +266,7 @@ else if (p == q)
 
 如果此时，我们再向队列中添加节点D，此时p=q,更新p节点为head节点，重新循环，此时q=p.next为null,直接添加元素到p.next中，并更新tail节点。如下图所示：
 
-![](http://cdn.zzwzdx.cn/blog/入列_6.png&blog)
+![](https://gitee.com/zhangzwd/pic-bed/raw/master/blog/入列_6.png)
 
 ### 总结
 
