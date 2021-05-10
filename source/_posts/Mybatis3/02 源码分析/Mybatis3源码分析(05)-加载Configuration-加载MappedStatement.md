@@ -1,5 +1,5 @@
 ---
-title: MyBatis3源码之XMLMapperBuilder加载ResultMap过程
+title: MyBatis3源码之MappedStatement加载过程
 tags:
   - MyBatis3源码解析
 copyright: false
@@ -10,7 +10,7 @@ special: m3s
 original: false
 reproduced: true
 date: 2021-05-10 22:12:16
-show_title: mybatis3-source-code-mappbuilder
+show_title: mybatis3-source-code-mappedStatement
 ---
 
 MappedStatement说明
