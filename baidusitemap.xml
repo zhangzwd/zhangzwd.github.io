@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.zzwzdx.cn/factory/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-array-blocking-queue/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-linkedBlockingQueue/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-priorityBlockingQueue/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-delayQueue/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-synchronousQueue-fair/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-synchronousQueue-nofair/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-linkedTransferQueue/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-linkedBlockingDeque/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/thread-pool/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/singleton/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis-xml-configuration/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis-xml-mapping/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis-dynamic-sql/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis-java-api/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis-log/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis-sql-statement-builder/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-source-code-preparation/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-configuration-loading/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-resultmap-loading/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-source-xmlmapperbuilder/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-source-code-mappedStatement/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-configuration-load/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-configuration-finish/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-configuration-pattern/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-sqlsession-creation/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-executor/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-boundsql-1/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-metaobject/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-statementhandler/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-statement-initialization/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-resultsethandler/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-boundsql-load-2/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-cache-implementation/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-plug/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-mapper-generation/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-mapper-implementation/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-mapper-dynamic-proxy/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/mybatis3-finish/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/spring-source-environment/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/deep-understanding-of-spring-ioc/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/java-thread/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/java-multithreading-introduction/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/java-thread-startup-and-termination/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/synchronized-implementation-principle/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/jmms-happensbefore/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/volatile-implementation/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/jmm-reordering/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/dcl-defects-and-optimization/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/introduction-to-aqs/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/how-aqs-works/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/aqs-chl-synchronization-queue-analysis/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/acquisition-and-release-of-exclusive-synchronization-status-aqs/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/acquisition-and-release-of-shared-synchronization-status-aqs/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/threadblocking-wakeup/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/reentrantlock-parsing/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-write-lock/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-condition-source/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-countdownlatch/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-cyclicbarrier/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-semaphore/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-exchanger/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-concurrenthashmap/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-redblacktree/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.zzwzdx.cn/juc-concurrent-linkedqueue/</loc>
+    <lastmod>2021-05-11</lastmod>
+  </url>
+</urlset>

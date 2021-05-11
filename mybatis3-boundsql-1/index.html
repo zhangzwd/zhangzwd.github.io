@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mybatis3源码分析之BoundSql的加载-1 | Java技术天地</title><meta name="description" content="Mybatis3源码分析之BoundSql的加载-1"><meta name="keywords" content="MyBatis3源码解析"><meta name="author" content="Java技术天地"><meta name="copyright" content="Java技术天地"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon-32x32.ico"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://hm.baidu.com"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Mybatis3源码分析之BoundSql的加载-1"><meta name="twitter:description" content="Mybatis3源码分析之BoundSql的加载-1"><meta name="twitter:image" content="https://www.zzwzdx.cn/img/avatar.png"><meta property="og:type" content="article"><meta property="og:title" content="Mybatis3源码分析之BoundSql的加载-1"><meta property="og:url" content="https://www.zzwzdx.cn/mybatis3-boundsql-1/"><meta property="og:site_name" content="Java技术天地"><meta property="og:description" content="Mybatis3源码分析之BoundSql的加载-1"><meta property="og:image" content="https://www.zzwzdx.cn/img/avatar.png"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode="1",t=Cookies.get("theme");if("1"==autoChangeMode){var isDarkMode=window.matchMedia("(prefers-color-scheme: dark)").matches,isLightMode=window.matchMedia("(prefers-color-scheme: light)").matches,isNotSpecified=window.matchMedia("(prefers-color-scheme: no-preference)").matches,hasNoSupport=!isDarkMode&&!isLightMode&&!isNotSpecified;if(void 0===t){if(isLightMode)activateLightMode();else if(isDarkMode)activateDarkMode();else if(isNotSpecified||hasNoSupport){console.log("You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.");var now=new Date,hour=now.getHours(),isNight=hour<6||18<=hour;isNight?activateDarkMode():activateLightMode()}}else"light"==t?activateLightMode():activateDarkMode()}else"2"==autoChangeMode?(isNight=(hour=(now=new Date).getHours())<6||18<=hour,void 0===t?isNight?activateDarkMode():activateLightMode():"light"===t?activateLightMode():activateDarkMode()):"dark"==t?activateDarkMode():"light"==t&&activateLightMode();function activateDarkMode(){document.documentElement.setAttribute("data-theme","dark"),null!==document.querySelector('meta[name="theme-color"]')&&document.querySelector('meta[name="theme-color"]').setAttribute("content","#000")}function activateLightMode(){document.documentElement.setAttribute("data-theme","light"),null!==document.querySelector('meta[name="theme-color"]')&&document.querySelector('meta[name="theme-color"]').setAttribute("content","#fff")}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="canonical" href="https://www.zzwzdx.cn/mybatis3-boundsql-1/"><link rel="prev" title="Mybatis3源码分析之MetaObject解析" href="https://www.zzwzdx.cn/mybatis3-metaobject/"><link rel="next" title="Mybatis3源码分析之Executor接口实现方式" href="https://www.zzwzdx.cn/mybatis3-executor/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><script>var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?6cdf806ea3d36641644ddfae3f9e80cb";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG={root:"/",algolia:void 0,localSearch:{path:"search.xml",languages:{hits_empty:"找不到您查询的内容:${query}"}},translate:{defaultEncoding:2,translateDelay:0,cookieDomain:"https://www.zzwzdx.cn/",msgToTraditionalChinese:"繁",msgToSimplifiedChinese:"簡"},copy:{success:"复制成功",error:"复制错误",noSupport:"浏览器不支持"},bookmark:{message_prev:"按",message_next:"键将本页加入书签"},runtime_unit:"天",runtime:!0,copyright:{languages:{author:"作者: Java技术天地",link:"链接: ",source:"来源: Java技术天地",info:"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},ClickShowText:void 0,medium_zoom:!1,fancybox:!0,Snackbar:{bookmark:{message_prev:"按",message_next:"键将本页加入书签"},chs_to_cht:"你已切换为繁体",cht_to_chs:"你已切换为简体",day_to_night:"你已切换为深色模式",night_to_day:"你已切换为浅色模式",bgLight:"#49b1f5",bgDark:"#2d3035",position:"top-center"},baiduPush:!1,highlightCopy:!0,highlightLang:!0,highlightShrink:"false",isFontAwesomeV5:!1,isPhotoFigcaption:!1}</script><script>var GLOBAL_CONFIG_SITE={isPost:!0,isHome:!1,isSidebar:!1}</script><noscript><style>#page-header{opacity:1}.justified-gallery img{opacity:1}</style></noscript><meta name="generator" content="Hexo 4.2.0"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror='onerror=null,src="/img/friend_404.gif"' alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">65</div></a></div></div><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">27</div></a></div></div><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">5</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/" aria-current="page"><i class="fa-fw fa fa-home"></i> <span>首页</span></a></div><div class="menus_item"><a class="site-page" href="/juc/" aria-current="page"><i class="fa-fw fa fa-lock"></i> <span>Java并发</span></a></div><div class="menus_item"><a class="site-page" href="/spring-ioc/" aria-current="page"><i class="fa-fw fa fa-eercast"></i> <span>Spring IOC专题</span></a></div><div class="menus_item"><a class="site-page" href="/dp/" aria-current="page"><i class="fa-fw fa fa-ge"></i> <span>设计模式</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-meetup" aria-hidden="true"></i> <span>Mybatis教程</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/mybatis3/"><i class="fa-fw fa fa-anchor"></i> <span>Mybatis基础教程</span></a></li><li><a class="site-page" href="/mybatis3-source/"><i class="fa-fw fa fa-asterisk"></i> <span>Mybatis源码分析</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/archives/" aria-current="page"><i class="fa-fw fa fa-archive"></i> <span>归档</span></a></div></div></div></div><div class="main-bg" id="body-wrap"><div class="post-bg" id="nav"><div id="page-header"><a class="pull_left" id="blog_name" href="/"><i class="logo"></i><span class="blog_title" id="site-name">Java技术天地</span></a><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/" aria-current="page"><i class="fa-fw fa fa-home"></i> <span>首页</span></a></div><div class="menus_item"><a class="site-page" href="/juc/" aria-current="page"><i class="fa-fw fa fa-lock"></i> <span>Java并发</span></a></div><div class="menus_item"><a class="site-page" href="/spring-ioc/" aria-current="page"><i class="fa-fw fa fa-eercast"></i> <span>Spring IOC专题</span></a></div><div class="menus_item"><a class="site-page" href="/dp/" aria-current="page"><i class="fa-fw fa fa-ge"></i> <span>设计模式</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-meetup" aria-hidden="true"></i> <span>Mybatis教程</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/mybatis3/"><i class="fa-fw fa fa-anchor"></i> <span>Mybatis基础教程</span></a></li><li><a class="site-page" href="/mybatis3-source/"><i class="fa-fw fa fa-asterisk"></i> <span>Mybatis源码分析</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/archives/" aria-current="page"><i class="fa-fw fa fa-archive"></i> <span>归档</span></a></div></div><div id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i></a></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div></div><main class="layout_post" id="content-inner"><article id="post"><div id="post-info"><div id="post-title"><div class="posttitle">Mybatis3源码分析之BoundSql的加载-1</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date" title="发表于 2021-05-11 13:55:47"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2021-05-11</time><span class="post-meta__categories"><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/MyBatis3%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" target="_blank">MyBatis3源码解析</a></span><span class="post-meta-pv-cv"><span class="post-meta__separator">|</span><i class="fa fa-eye post-meta__icon" aria-hidden="true"></i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"><span class="post-meta__separator">|</span><i class="post-meta__icon fa fa-comment-o" aria-hidden="true"></i><span>评论数:</span><a href="/mybatis3-boundsql-1/#post-comment"><span class="gitalk-comment-count comment-count"></span></a></span></div></div></div><div id="article-container"><p>整理完SqlSession和Executor的关系之后，接下来看看一条sql是怎么被解析执行的。</p><p>如下例:</p><pre><code>public static void queryUser(SqlSessionFactory sqlSessionFactory)
+    {
+        SqlSession sqlSession=sqlSessionFactory.openSession();
+        try
+        {
+            Map&lt;String,Object&gt; param=new HashMap&lt;&gt;();
+            param.put(&quot;userId&quot;, &quot;21458594739&quot;);
+            //sqlSession.selectList方法就是要详细分析的方法
+            List&lt;User&gt; list=sqlSession.selectList(&quot;com.ashan.user.selectUserDetail&quot;, param);
+            System.out.println(list);
+            sqlSession.commit();
+        }
+        catch(Exception e)
+        {
+            sqlSession.rollback();
+        }
+        finally
+        {
+            sqlSession.close();
+        }
+    }</code></pre><p>对应的配置文件:</p><pre><code>&lt;resultMap type=&quot;com.ashan.mybatis.User&quot; id=&quot;detailUserResultMap&quot;&gt;
+        &lt;constructor&gt;
+            &lt;idArg column=&quot;user_id&quot; javaType=&quot;String&quot;/&gt;
+            &lt;arg column=&quot;user_name&quot;/&gt;
+        &lt;/constructor&gt;
+
+        &lt;result property=&quot;password&quot; column=&quot;user_pwd&quot; /&gt;
+        &lt;result property=&quot;type&quot; column=&quot;user_type&quot; javaType=&quot;com.ashan.mybatis.UserType&quot; 
+               typeHandler=&quot;com.ashan.mybatis.UserTypeHandler&quot;/&gt;
+        &lt;result property=&quot;svcnum&quot; column=&quot;svc_num&quot; /&gt; 
+        &lt;association property=&quot;cust&quot; javaType=&quot;com.ashan.mybatis.Cust&quot;&gt; 
+            &lt;id property=&quot;id&quot; column=&quot;cust_id&quot;/&gt;
+            &lt;result property=&quot;custname&quot; column=&quot;cust_name&quot;/&gt;
+            &lt;result property=&quot;certNo&quot; column=&quot;cert_no&quot;/&gt;
+        &lt;/association&gt;
+
+        &lt;collection property=&quot;accts&quot; ofType=&quot;com.ashan.mybatis.Acct&quot;&gt;
+            &lt;id property=&quot;id&quot; column=&quot;acct_id&quot; /&gt;
+            &lt;result property=&quot;payName&quot; column=&quot;pay_name&quot;/&gt;
+            &lt;result property=&quot;bankNo&quot; column=&quot;bank_no&quot;/&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;selectUserDetail&quot; resultMap=&quot;detailUserResultMap&quot;&gt;
+        &lt;![CDATA[
+            select user_id,user_name,user_type,cust_id
+                from tf_f_user a 
+                where a.user_id=#${userId} 
+        ]]&gt;
+    &lt;/select&gt;</code></pre><h1 id="DefaultSqlSession-selectList方法"><a href="#DefaultSqlSession-selectList方法" class="headerlink" title="DefaultSqlSession.selectList方法"></a>DefaultSqlSession.selectList方法</h1><pre><code>public &lt;E&gt; List&lt;E&gt; selectList(String statement, Object parameter) {
+  //RowBounds表示查询的范围，一般在分页时用到
+  return this.selectList(statement, parameter, RowBounds.DEFAULT);
+}
+
+public &lt;E&gt; List&lt;E&gt; selectList(String statement, Object parameter, RowBounds rowBounds) {
+  try { 
+    //从Configuration获取一个MappedStatement配置
+    MappedStatement ms = configuration.getMappedStatement(statement);
+    //直接调用executor.query()方法
+    List&lt;E&gt; result = executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
+    return result;
+  } catch (Exception e) {
+    throw ExceptionFactory.wrapException(&quot;Error querying database.  Cause: &quot; + e, e);
+  } finally {
+    ErrorContext.instance().reset();
+  }
+}</code></pre><p>从上可以看到sqlSession.selectList方法非常简单，他是用executor来完成查询的。再看看BaseExecutor对查询的实现:</p><pre><code>public &lt;E&gt; List&lt;E&gt; query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+    //获取一个BoundSql，这个BoundSql的获取过程就是本节要详细讨论的
+    BoundSql boundSql = ms.getBoundSql(parameter);
+    CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
+    return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
+ }</code></pre><h1 id="BoundSql类定义"><a href="#BoundSql类定义" class="headerlink" title="BoundSql类定义"></a>BoundSql类定义</h1><p>如下是BoundSql的源代码</p><pre><code>/**
+ * An actual SQL String got form an {@link SqlSource} after having processed any dynamic content.
+ * The SQL may have SQL placeholders &quot;?&quot; and an list (ordered) of an parameter mappings 
+ * with the additional information for each parameter (at least the property name of the input object to read 
+ * the value from). 
+ * &lt;/br&gt;
+ * Can also have additional parameters that are created by the dynamic language (for loops, bind...).
+ */
+/**
+ * @author Clinton Begin
+ */
+public class BoundSql {
+  //经过处理的sql,这个sql已经可以被数据库执行了
+  private String sql;
+  //sql中的参数映射，只是映射，没有包含实际的值
+  private List&lt;ParameterMapping&gt; parameterMappings;
+  //客户端执行sql时传入的参数
+  private Object parameterObject;
+
+  //暂时不讨论
+  private Map&lt;String, Object&gt; additionalParameters;
+  //暂时不讨论
+  private MetaObject metaParameters;
+
+  public BoundSql(Configuration configuration, String sql, List&lt;ParameterMapping&gt; parameterMappings, Object parameterObject) {
+    this.sql = sql;
+    this.parameterMappings = parameterMappings;
+    this.parameterObject = parameterObject;
+    this.additionalParameters = new HashMap&lt;String, Object&gt;();
+    this.metaParameters = configuration.newMetaObject(additionalParameters);
+  }
+
+  public String getSql() {
+    return sql;
+  }
+
+  public List&lt;ParameterMapping&gt; getParameterMappings() {
+    return parameterMappings;
+  }
+
+  public Object getParameterObject() {
+    return parameterObject;
+  }
+
+  public boolean hasAdditionalParameter(String name) {
+    return metaParameters.hasGetter(name);
+  }
+
+  public void setAdditionalParameter(String name, Object value) {
+    metaParameters.setValue(name, value);
+  }
+
+  public Object getAdditionalParameter(String name) {
+    return metaParameters.getValue(name);
+  }
+}</code></pre><p>从源代码可以看出，BoundSql只是一个简单的java对象，有两个属性比较重要</p><ol><li>sql:从解析时可以看出这个sql不是配置文件中的sql,这个sql已经经过了处理(如:占用位符的处理、动态语句的解析if、foreach等待)</li><li>parameterMappings:sql对应的参数列表</li></ol><p>举例:</p><pre><code>&lt;![CDATA[
+            select user_id,user_name,user_type,cust_id
+                from tf_f_user a 
+                where a.user_id=#{userId} 
+        ]]&gt;
+        &lt;if test=&quot;userName!=null&quot;&gt; 
+            and 
+            user_name=#{userName} 
+        &lt;/if&gt;</code></pre><p>如果执行这条sql里参数中的userName属性为空，那么sql的值将会是</p><pre><code>select user_id,user_name,user_type,cust_id
+                from tf_f_user a 
+                where a.user_id=?</code></pre><p>parameterMappings.size()大小为1，只记录了userId这个参数映射</p><p>如果userName不为空，那么sql的值将会是</p><pre><code>select user_id,user_name,user_type,cust_id
+                from tf_f_user a 
+                where a.user_id=? 
+   and user_name=?</code></pre><p>parameterMappings.size()大小为2，记录了userId和userName两个参数映射</p><h1 id="MappedStatement-getBoundSql-方法"><a href="#MappedStatement-getBoundSql-方法" class="headerlink" title="MappedStatement.getBoundSql()方法"></a>MappedStatement.getBoundSql()方法</h1><pre><code>public BoundSql getBoundSql(Object parameterObject) {
+    //通过sqlSource对象获取
+    BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+
+    //parameterMap一般不会配置，如下内容不讨论
+    List&lt;ParameterMapping&gt; parameterMappings = boundSql.getParameterMappings();
+    if (parameterMappings == null || parameterMappings.size() &lt;= 0) {
+      boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
+    }
+
+    // check for nested result maps in parameter mappings (issue #30)
+    for (ParameterMapping pm : boundSql.getParameterMappings()) {
+      String rmId = pm.getResultMapId();
+      if (rmId != null) {
+        ResultMap rm = configuration.getResultMap(rmId);
+        if (rm != null) {
+          hasNestedResultMaps |= rm.hasNestedResultMaps();
+        }
+      }
+    }
+
+    return boundSql;
+  }</code></pre><p>还记得sqlSource是怎么被创建的吗？(前面章节有详细说明)</p><pre><code>public SqlSource parseScriptNode() {
+    List&lt;SqlNode&gt; contents = parseDynamicTags(context);
+    MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
+    SqlSource sqlSource = null;
+    if (isDynamic) {
+      sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
+    } else {
+      sqlSource = new RawSqlSource(configuration, rootSqlNode, parameterType);
+    }
+    return sqlSource;
+  }</code></pre><h1 id="DynamicSqlSource-getBoundSql-方法"><a href="#DynamicSqlSource-getBoundSql-方法" class="headerlink" title="DynamicSqlSource.getBoundSql()方法"></a>DynamicSqlSource.getBoundSql()方法</h1><pre><code>public class DynamicSqlSource implements SqlSource {
+
+  private Configuration configuration;
+  private SqlNode rootSqlNode;
+
+  public DynamicSqlSource(Configuration configuration, SqlNode rootSqlNode) {
+    this.configuration = configuration;
+    this.rootSqlNode = rootSqlNode;
+  }
+
+  public BoundSql getBoundSql(Object parameterObject) {
+    DynamicContext context = new DynamicContext(configuration, parameterObject);
+    //sqlNode使用组合模式实现，他有多个SqlNode对象
+    //每个SqlNode的apply方法调用时，都为将sql加到context中，最终通过context.getSql()得到完整的sql
+    rootSqlNode.apply(context);
+    SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
+    Class&lt;?&gt; parameterType = parameterObject == null ? Object.class : parameterObject.getClass();
+    SqlSource sqlSource = sqlSourceParser.parse(context.getSql(), parameterType, context.getBindings());
+    BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+    for (Map.Entry&lt;String, Object&gt; entry : context.getBindings().entrySet()) {
+      boundSql.setAdditionalParameter(entry.getKey(), entry.getValue());
+    }
+    return boundSql;
+  }
+
+}</code></pre><p>DynamicContext可以看成是一个sql的容器，sqlNode的apply()方法会往这个容器上加sql.</p><p>DynamicContext动态上下文</p><p>======================</p><p>这个类有两重要的属性</p><pre><code>//参数上下文，ContextMap为一个Map
+private final ContextMap bindings;
+//sql,sqlNode中的apply()方法调用了appendSql(text)方法，最终会将sql保存在这个属性中
+private final StringBuilder sqlBuilder = new StringBuilder();
+
+ public void appendSql(String sql) {
+  sqlBuilder.append(sql);
+  sqlBuilder.append(&quot; &quot;);
+}
+
+public String getSql() {
+  return sqlBuilder.toString().trim();
+}</code></pre><p>再看看参数上下文</p><pre><code>static class ContextMap extends HashMap&lt;String, Object&gt; {
+    private static final long serialVersionUID = 2977601501966151582L;
+    //这个对运行时的参数进行了包装
+    private MetaObject parameterMetaObject;
+    public ContextMap(MetaObject parameterMetaObject) {
+      this.parameterMetaObject = parameterMetaObject;
+    }
+
+    @Override
+    public Object put(String key, Object value) {
+      return super.put(key, value);
+    }
+
+
+    //这个方法才是最重要的
+    @Override
+    public Object get(Object key) {
+      String strKey = (String) key;
+      //如果自身的map里
+      if (super.containsKey(strKey)) {
+        return super.get(strKey);
+      }
+
+      if (parameterMetaObject != null) {
+        //从参数里找
+        Object object = parameterMetaObject.getValue(strKey);
+        // issue #61 do not modify the context when reading
+//        if (object != null) { 
+//          super.put(strKey, object);
+//        }
+
+        return object;
+      }
+
+      return null;
+    }</code></pre><p>这里举两个例子来说明ContextMap,其中MetaObject将在下一章节详细讨论</p><ol><li><p>参数为Map类型</p><pre><code>Map paraMap=new HashMap();
+paraMap.put(&quot;userId&quot;,&quot;12341234&quot;);
+paraMap.put(&quot;userName&quot;,&quot;ashan&quot;);
+List&lt;User&gt; list=sqlSession.selectList(&quot;dao.selectUser&quot;,paraMap);</code></pre></li></ol><ol start="2"><li>参数为为一个普通的java对象</li></ol><pre><code>   User user=new User();
+user.setUserId(&quot;12341234&quot;);
+user.setUserName(&quot;ashan&quot;);
+                    List&lt;User&gt; list=sqlSession.selectList(&quot;dao.selectUser&quot;,user);</code></pre><p>以上两种方式是最常见的参数设置方式，调用ContextMap.get(“userId”)方法之后，都能得到”12341234”！这就是ContextMap提供的功能。</p><p>SqlSource与SqlNode</p><p>====================</p><p>下面详细分析apply()方法。</p><p>例如：DynamicSqlSource是从如下配置加载的</p><pre><code>&lt;![CDATA[
+            select user_id,user_name,user_type,cust_id
+                from tf_f_user a 
+                where a.user_id=#{userId} 
+        ]]&gt;
+        &lt;if test=&quot;userName!=null&quot;&gt; 
+            and 
+            user_name=${userName} 
+        &lt;/if&gt;</code></pre><p>这个DynamicSqlSoure的结构如下(以上面的SQL为例),</p><p><img src="/" class="lazyload" data-src="https://img-blog.csdn.net/20151221105942363" alt></p><p>结合例子说明一下sql在sqlNode中是怎么分布的</p><ol><li>StaticTextSqlNode1:保存了”select user_id,user_name,user_type,cust_id”</li><li>StaticTextSqlNode2:保存了”from tf_f_user a”</li><li>TextSqlNode3:保存了”where a.user_id=#{userId}”,同时标识为动态的,因为他有占位符</li><li>StaticTextSqlNode4:保存了”and”</li><li>TextSqlNode5:保存了”user_name=#{userName}”</li><li>IfSqlNode:保存了其test属性值，StaticTextSqlNode4和TextSqlNode5是否加入的context中也是由其控制的</li></ol><p>接下来看看每一种SqlNode是怎么解析sql并生成parameterMapping的</p><h1 id="StaticTextSqlNode-apply-方法"><a href="#StaticTextSqlNode-apply-方法" class="headerlink" title="StaticTextSqlNode.apply()方法"></a>StaticTextSqlNode.apply()方法</h1><pre><code>public boolean apply(DynamicContext context) {
+   context.appendSql(text);
+   return true;
+ }</code></pre><p>只是简单的把对应的test追加到context中。</p><p>所以StaticTextSqlNode1和StaticTextSqlNode2的apply方法执行后,DynamicContext中的sql内容为:</p><pre><code>select  user_id,user_name,user_type,cust_id from tf_f_user a</code></pre><h1 id="TextSqlNode-apply-方法"><a href="#TextSqlNode-apply-方法" class="headerlink" title="TextSqlNode.apply()方法"></a>TextSqlNode.apply()方法</h1><pre><code>public boolean apply(DynamicContext context) {
+    //GenericTokenParser为一个占用符解析器
+    //BindingTokenParsery为一个TohenHandler:解析具体的占位符
+    GenericTokenParser parser = createParser(new BindingTokenParser(context));
+    context.appendSql(parser.parse(text));
+    return true;
+  }
+
+ private GenericTokenParser createParser(TokenHandler handler) {
+    //解析${tab_name}这种占位符，注意不是这种#{propertyName}
+    return new GenericTokenParser(&quot;${&quot;, &quot;}&quot;, handler);
+  }</code></pre><p>再看看GenericTokenParser.parse()方法:</p><pre><code>public String parse(String text) {
+    StringBuilder builder = new StringBuilder();
+    if (text != null &amp;&amp; text.length() &gt; 0) {
+      char[] src = text.toCharArray();
+      int offset = 0;
+      int start = text.indexOf(openToken, offset);
+      while (start &gt; -1) {
+        if (start &gt; 0 &amp;&amp; src[start - 1] == &apos;\\&apos;) {
+          // the variable is escaped. remove the backslash.
+          builder.append(src, offset, start - 1).append(openToken);
+          offset = start + openToken.length();
+        } else {
+          int end = text.indexOf(closeToken, start);
+          if (end == -1) {
+            builder.append(src, offset, src.length - offset);
+            offset = src.length;
+          } else {
+            builder.append(src, offset, start - offset);
+            offset = start + openToken.length();
+            String content = new String(src, offset, end - offset);
+            //关键是这句，调用了handler.handleToken()方法
+            builder.append(handler.handleToken(content));
+            offset = end + closeToken.length();
+          }
+        }
+        start = text.indexOf(openToken, offset);
+      }
+      if (offset &lt; src.length) {
+        builder.append(src, offset, src.length - offset);
+      }
+    }
+    return builder.toString();
+  }</code></pre><p>认真分析上面的代码，最关键的是调用了handler.handleToken(content)方法</p><p>如果text为:select ${primary_key},${col_name} from ${tab_name)，那么handler.handleToken()方法会被调用三次，分别为：</p><ol><li>handler.handleToken(“primary_key”)</li><li>handler.handleToken(“col_name”)</li><li>handler.handleToken(“tab_name”)</li></ol><p>再来看BindingTokenParser.handleToken()方法</p><pre><code>public String handleToken(String content) {
+      Object parameter = context.getBindings().get(&quot;_parameter&quot;);
+      if (parameter == null) {
+        context.getBindings().put(&quot;value&quot;, null);
+      } else if (SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
+        context.getBindings().put(&quot;value&quot;, parameter);
+      }
+      //从ContextMap中取出content对应的值返回
+      Object value = OgnlCache.getValue(content, context.getBindings());
+      return (value == null ? &quot;&quot; : String.valueOf(value)); // issue #274 return &quot;&quot; instead of &quot;null&quot;
+    }</code></pre><p>从上面可以看到TextSqlNode.apply()，只会处理”${}”这种占位符，而不会处理这种占位符:”#{}”</p><p>所以当TextSqlNode3.apply()执行完成之后，DynamicContext中的sql内容为:</p><pre><code>select  user_id,user_name,user_type,cust_id from tf_f_user a where user_id=#{userId}</code></pre><h1 id="IfSqlNode-apply-方法"><a href="#IfSqlNode-apply-方法" class="headerlink" title="IfSqlNode.apply()方法"></a>IfSqlNode.apply()方法</h1><pre><code>public boolean apply(DynamicContext context) {
+  //动态执行test属性中表达式，如果返回true，才会执行对应的SqlNode.apply()方法
+  if (evaluator.evaluateBoolean(test, context.getBindings())) {
+    contents.apply(context);
+    return true;
+  }
+  return false;`
+}</code></pre><p>结合上例，当IfSqlNode.apply()方法执行后，有两种情况：</p><p>如果参数中的userName不为空的话,DynamicContext中的sql内容为:</p><pre><code>select  user_id,user_name,user_type,cust_id from tf_f_user a where user_id=#{userId} and user_name=#{userName}</code></pre><p>如果参数呻的userName为空的话，DynamicContext中的sql内容为:</p><pre><code>select  user_id,user_name,user_type,cust_id from tf_f_user a where user_id=#{userId}</code></pre><p>ForEachSqlNode和ChooseSqlNode的实现原理跟IfSqlNode实现差不多，这里不做讨论!</p><h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>SqlNode.apply()方法生成的sql也只是半成品，并没有处理”#{}”占位符！这个占位符的处理后续再分析。</p><blockquote><p>作者：ashan_li<br>链接：<a href="http://suo.im/5G73Rn" target="_blank" rel="external nofollow noopener noreferrer">http://suo.im/5G73Rn</a></p></blockquote></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MyBatis3%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" target="_blank">MyBatis3源码解析</a></div><div class="post_share"><div class="social-share" data-image="/img/avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"><i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/pay-wechat.png" alt="微信"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/pay-alipay.png" alt="支付宝"><div class="post-qr-code__desc">支付宝</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/mybatis3-metaobject/"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Mybatis3源码分析之MetaObject解析</div></div></a></div><div class="next-post pull_right"><a href="/mybatis3-executor/"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Mybatis3源码分析之Executor接口实现方式</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i> <span>相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/mybatis3-source-code-preparation/" title="MyBatis3源码解析-前期准备"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-03-17</div><div class="relatedPosts_title">MyBatis3源码解析-前期准备</div></div></a></div><div class="relatedPosts_item"><a href="/mybatis3-configuration-loading/" title="MyBatis3源码之Configuration加载过程"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-03-18</div><div class="relatedPosts_title">MyBatis3源码之Configuration加载过程</div></div></a></div><div class="relatedPosts_item"><a href="/mybatis3-resultmap-loading/" title="MyBatis3源码之ResultMap加载过程"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-03-21</div><div class="relatedPosts_title">MyBatis3源码之ResultMap加载过程</div></div></a></div><div class="relatedPosts_item"><a href="/mybatis3-source-xmlmapperbuilder/" title="MyBatis3源码之XMLMapperBuilder加载ResultMap过程"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-03-28</div><div class="relatedPosts_title">MyBatis3源码之XMLMapperBuilder加载ResultMap过程</div></div></a></div><div class="relatedPosts_item"><a href="/mybatis3-source-code-mappedStatement/" title="MyBatis3源码之MappedStatement加载过程"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2021-05-10</div><div class="relatedPosts_title">MyBatis3源码之MappedStatement加载过程</div></div></a></div><div class="relatedPosts_item"><a href="/mybatis3-configuration-load/" title="Mybatis3源码分析之缓存配置加载"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2021-05-11</div><div class="relatedPosts_title">Mybatis3源码分析之缓存配置加载</div></div></a></div></div><div class="clear_both"></div></div><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i> <span>评论</span></div><div id="gitalk-container"></div><script>var gitalk=new Gitalk({clientID:"7cba1dad1cf41bf40ba9",clientSecret:"5d208277d004b840b5b67a31ebbf6aeb80a7a901",repo:"gitalk",owner:"zhangzwd",admin:["zhangzwd"],id:md5(decodeURI(location.pathname)),language:"zh-CN",perPage:10,distractionFreeMode:!0,pagerDirection:"last",createIssueManually:!1,updateCountCallback:commentCount});function commentCount(e){try{document.getElementsByClassName("gitalk-comment-count")[0].innerHTML=e}catch(e){return!1}}gitalk.render("gitalk-container")</script></div></article><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar"><div class="left-col"><img src="/img/wechat-qcode.png"></div><div class="rght-col"><h2>关注公众号</h2><small><div>→「技术干货」每日推送</div><div>→「免费资料」随时领取</div><div>→「每月赠书」抽奖活动</div></small></div></div><div class="wechat-img"><a href="/img/wdewm.jpg" target="_blank">点击添加为微信,加入讨论技术群</a></div><div class="social-desc">除公众号以外，我还会在以下平台发布内容：</div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/zhangzwd" target="_blank" title="Github" rel="external nofollow noopener noreferrer"><img src="/img/github.svg"></a><a class="social-icon" href="https://gitee.com/zhangzwd" target="_blank" title="Gitee" rel="external nofollow noopener noreferrer"><img src="/img/gitee.svg"></a><a class="social-icon" href="https://www.zhihu.com/people/zhangzhengwei/activities" target="_blank" title="知乎" rel="external nofollow noopener noreferrer"><img src="/img/zhihu.svg"></a><a class="social-icon" href="https://blog.csdn.net/zhang199091" target="_blank" title="CSDN" rel="external nofollow noopener noreferrer"><img src="/img/CSDN.svg"></a><a class="social-icon" href="https://www.jianshu.com/u/44dfb2efe2f6" target="_blank" title="简书" rel="external nofollow noopener noreferrer"><img src="/img/JianShu.svg"></a></div></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fa fa-bullhorn card-announcement-animation" aria-hidden="true"></i><span>公告</span></div><div class="announcement_content">感谢访问本站，如喜欢清收藏 ^_^<div class="card-info-bookmark is-center"><a class="bookmark button--primary button--animated" id="bookmark-it" href="javascript:;" title="加入书签" target="_self"><i class="fa fa-bookmark" aria-hidden="true"></i><span>加入书签</span></a></div></div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fa fa-history" aria-hidden="true"></i><span>最新文章</span></div><div class="aside-recent-item"><div class="aside-recent-post"><a href="/mybatis3-finish/" target="_blank"><div class="aside-post-title"><div class="aside-post_title" href="/mybatis3-finish/" target="_blank" title="Mybatis3源码分析之总结">Mybatis3源码分析之总结</div><time class="aside-post_meta post-meta__date" title="发表于 2021-05-11 16:30:47">2021-05-11</time></div></a></div><div class="aside-recent-post"><a href="/mybatis3-mapper-dynamic-proxy/" target="_blank"><div class="aside-post-title"><div class="aside-post_title" href="/mybatis3-mapper-dynamic-proxy/" target="_blank" title="Mybatis3源码分析之Mapper动态代理">Mybatis3源码分析之Mapper动态代理</div><time class="aside-post_meta post-meta__date" title="发表于 2021-05-11 16:10:47">2021-05-11</time></div></a></div><div class="aside-recent-post"><a href="/mybatis3-mapper-implementation/" target="_blank"><div class="aside-post-title"><div class="aside-post_title" href="/mybatis3-mapper-implementation/" target="_blank" title="Mybatis3源码分析之Mapper实现">Mybatis3源码分析之Mapper实现</div><time class="aside-post_meta post-meta__date" title="发表于 2021-05-11 16:00:47">2021-05-11</time></div></a></div><div class="aside-recent-post"><a href="/mybatis3-mapper-generation/" target="_blank"><div class="aside-post-title"><div class="aside-post_title" href="/mybatis3-mapper-generation/" target="_blank" title="Mybatis3源码分析之Mapper生成过程">Mybatis3源码分析之Mapper生成过程</div><time class="aside-post_meta post-meta__date" title="发表于 2021-05-11 15:55:47">2021-05-11</time></div></a></div><div class="aside-recent-post"><a href="/mybatis3-plug/" target="_blank"><div class="aside-post-title"><div class="aside-post_title" href="/mybatis3-plug/" target="_blank" title="Mybatis3源码分析之插件解析">Mybatis3源码分析之插件解析</div><time class="aside-post_meta post-meta__date" title="发表于 2021-05-11 15:50:47">2021-05-11</time></div></a></div></div></div></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2021 By Java技术天地</div><div class="icp"><a href="http://www.beian.miit.gov.cn" target="_blank" rel="external nofollow noopener noreferrer"><img class="icp-icon" src="/img/icp.png"><span>鄂ICP备19013195号</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments"></i></a><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="external nofollow noopener noreferrer" style="color:#49b1f5">hexo-generator-search</a> <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async></script><script src="https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js"></script><script>document.addEventListener("DOMContentLoaded",function(){pangu.spacingElementById("content-inner")})</script><script src="/js/search/local-search.js"></script></body></html>
