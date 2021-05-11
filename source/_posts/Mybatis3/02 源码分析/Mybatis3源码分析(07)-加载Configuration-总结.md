@@ -10,7 +10,7 @@ special: m3s
 original: false
 reproduced: true
 show_title: mybatis3-configuration-finish
-date: 2021-05-11 13:30:47
+date: 2021-05-11 13:35:47
 ---
 
 Configuration中的配置信息
